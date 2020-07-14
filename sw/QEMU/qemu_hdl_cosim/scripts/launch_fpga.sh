@@ -6,7 +6,7 @@ QEMU="x86_64-softmmu/qemu-system-x86_64"
 DISK_CACHE="writethrough"
 CORES=1
 MEMORY="-m 4G"
-NIC="-device virtio-net-pci -device pci-testdev"
+NIC="-device virtio-net-pci,disable-modern=on"
 DEBUG=""
 IMG="../../cosim.qcow2"
 
