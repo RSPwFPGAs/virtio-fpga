@@ -1,0 +1,38 @@
+diff -Naur qemu-2.10.0-rc3.orig.cosim-patched/hw/virtio/virtio-pci.c qemu-2.10.0-rc3/hw/virtio/virtio-pci.c
+--- qemu-2.10.0-rc3.orig.cosim-patched/hw/virtio/virtio-pci.c	2020-07-16 22:08:27.241047871 +0800
++++ qemu-2.10.0-rc3/hw/virtio/virtio-pci.c	2020-07-16 22:21:17.958748545 +0800
+@@ -353,6 +353,8 @@
+     VirtIOPCIProxy *proxy = opaque;
+     VirtIODevice *vdev = virtio_bus_get_device(&proxy->bus);
+     hwaddr pa;
++    
++    printf("pio_wr: @0x%08x =0x%08x\n", addr, val);
+ 
+     switch (addr) {
+     case VIRTIO_PCI_GUEST_FEATURES:
+@@ -466,6 +468,7 @@
+         break;
+     }
+ 
++    printf("pio_rd: @0x%08x =0x%08x\n", addr, ret);
+     return ret;
+ }
+ 
+@@ -1254,6 +1257,8 @@
+         val = 0;
+     }
+ 
++    printf("mmio_rd: @0x%016lx =0x%08x\n", addr, val);
++
+     return val;
+ }
+ 
+@@ -1263,6 +1268,8 @@
+     VirtIOPCIProxy *proxy = opaque;
+     VirtIODevice *vdev = virtio_bus_get_device(&proxy->bus);
+ 
++    printf("mmio_wr: @0x%016lx =0x%016lx\n", addr, val);
++
+     switch (addr) {
+     case VIRTIO_PCI_COMMON_DFSELECT:
+         proxy->dfselect = val;
