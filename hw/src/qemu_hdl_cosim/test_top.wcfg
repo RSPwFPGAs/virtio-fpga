@@ -16,15 +16,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="115110000000fs"></ZoomStartTime>
-      <ZoomEndTime time="285510000001fs"></ZoomEndTime>
-      <Cursor1Time time="257110000000fs"></Cursor1Time>
+      <ZoomStartTime time="34844493662fs"></ZoomStartTime>
+      <ZoomEndTime time="35274191013fs"></ZoomEndTime>
+      <Cursor1Time time="34982000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="227"></NameColumnWidth>
-      <ValueColumnWidth column_width="146"></ValueColumnWidth>
+      <ValueColumnWidth column_width="138"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="189" />
+   <WVObjectSize size="197" />
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_axi_ctl_aclk">
       <obj_property name="ElementShortName">i_axi_ctl_aclk</obj_property>
       <obj_property name="ObjectShortName">i_axi_ctl_aclk</obj_property>
@@ -780,5 +780,38 @@
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/feature_ram/S_AXI_bvalid">
       <obj_property name="ElementShortName">S_AXI_bvalid</obj_property>
       <obj_property name="ObjectShortName">S_AXI_bvalid</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider190" type="divider">
+      <obj_property name="label">virtio csr</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/feature_ram/virtio_csr_0/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/feature_ram/virtio_csr_0/rst">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/feature_ram/virtio_csr_0/addr">
+      <obj_property name="ElementShortName">addr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">addr[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/feature_ram/virtio_csr_0/en">
+      <obj_property name="ElementShortName">en</obj_property>
+      <obj_property name="ObjectShortName">en</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/feature_ram/virtio_csr_0/dout">
+      <obj_property name="ElementShortName">dout[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dout[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/feature_ram/virtio_csr_0/we">
+      <obj_property name="ElementShortName">we[3:0]</obj_property>
+      <obj_property name="ObjectShortName">we[3:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/feature_ram/virtio_csr_0/din">
+      <obj_property name="ElementShortName">din[31:0]</obj_property>
+      <obj_property name="ObjectShortName">din[31:0]</obj_property>
    </wvobject>
 </wave_config>

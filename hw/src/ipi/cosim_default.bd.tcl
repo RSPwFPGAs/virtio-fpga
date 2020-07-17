@@ -36,6 +36,13 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 # To test this script, run the following commands from Vivado Tcl console:
 # source shell_region_script.tcl
 
+
+# The design that will be created by this Tcl script contains the following 
+# module references:
+# virtio_csr
+
+# Please add the sources of those modules before sourcing this Tcl script.
+
 # If there is no project opened, this script will create a
 # project, but make sure you do not have an existing project
 # <./myproj/project_1.xpr> in the current working folder.
@@ -126,7 +133,6 @@ if { $bCheckIPs == 1 } {
 xilinx.com:ip:axi_vip:*\
 xilinx.com:ip:jtag_axi:*\
 xilinx.com:ip:axi_bram_ctrl:*\
-xilinx.com:ip:blk_mem_gen:*\
 COMPAS:COMPAS:QEMUPCIeBridge:*\
 xilinx.com:ip:util_ds_buf:*\
 "
@@ -146,6 +152,31 @@ xilinx.com:ip:util_ds_buf:*\
       set bCheckIPsPassed 0
    }
 
+}
+
+##################################################################
+# CHECK Modules
+##################################################################
+set bCheckModules 1
+if { $bCheckModules == 1 } {
+   set list_check_mods "\ 
+virtio_csr\
+"
+
+   set list_mods_missing ""
+   common::send_msg_id "BD_TCL-006" "INFO" "Checking if the following modules exist in the project's sources: $list_check_mods ."
+
+   foreach mod_vlnv $list_check_mods {
+      if { [can_resolve_reference $mod_vlnv] == 0 } {
+         lappend list_mods_missing $mod_vlnv
+      }
+   }
+
+   if { $list_mods_missing ne "" } {
+      catch {common::send_msg_id "BD_TCL-115" "ERROR" "The following module(s) are not found in the project: $list_mods_missing" }
+      common::send_msg_id "BD_TCL-008" "INFO" "Please add source files for the missing module(s) above."
+      set bCheckIPsPassed 0
+   }
 }
 
 if { $bCheckIPsPassed != 1 } {
@@ -282,19 +313,19 @@ proc create_hier_cell_feature_ram { parentCell nameHier } {
    CONFIG.SINGLE_PORT_BRAM {1} \
  ] $axi_bram_ctrl_0
 
-  # Create instance: blk_mem_gen_0, and set properties
-  set blk_mem_gen_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:blk_mem_gen blk_mem_gen_0 ]
-  set_property -dict [ list \
-   CONFIG.Enable_B {Always_Enabled} \
-   CONFIG.Memory_Type {Single_Port_RAM} \
-   CONFIG.Port_B_Clock {0} \
-   CONFIG.Port_B_Enable_Rate {0} \
-   CONFIG.Port_B_Write_Rate {0} \
-   CONFIG.Use_RSTB_Pin {false} \
- ] $blk_mem_gen_0
-
+  # Create instance: virtio_csr_0, and set properties
+  set block_name virtio_csr
+  set block_cell_name virtio_csr_0
+  if { [catch {set virtio_csr_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_msg_id "BD_TCL-105" "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $virtio_csr_0 eq "" } {
+     catch {common::send_msg_id "BD_TCL-106" "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
   # Create interface connections
-  connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTA [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA] [get_bd_intf_pins blk_mem_gen_0/BRAM_PORTA]
+  connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTA [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA] [get_bd_intf_pins virtio_csr_0/BRAM_PORTA]
   connect_bd_intf_net -intf_net axi_interconnect_1_M00_AXI [get_bd_intf_pins S_AXI] [get_bd_intf_pins axi_bram_ctrl_0/S_AXI]
 
   # Create port connections
