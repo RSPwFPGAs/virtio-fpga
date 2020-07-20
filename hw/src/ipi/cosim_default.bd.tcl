@@ -371,7 +371,6 @@ proc create_hier_cell_FIU { parentCell nameHier } {
   current_bd_instance $hier_obj
 
   # Create interface pins
-  create_bd_intf_pin -mode Slave -vlnv xilinx.com:interface:aximm_rtl:1.0 S_AXI_BRIDGE
   create_bd_intf_pin -mode Master -vlnv xilinx.com:interface:pcie_7x_mgt_rtl:1.0 pci_express
   create_bd_intf_pin -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 pcie_refclk
 
@@ -391,27 +390,36 @@ proc create_hier_cell_FIU { parentCell nameHier } {
   # Create instance: axi_vip_0, and set properties
   set axi_vip_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_vip axi_vip_0 ]
 
+  # Create instance: axi_vip_1, and set properties
+  set axi_vip_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_vip axi_vip_1 ]
+  set_property -dict [ list \
+   CONFIG.INTERFACE_MODE {PASS_THROUGH} \
+ ] $axi_vip_1
+
   # Create instance: feature_ram
   create_hier_cell_feature_ram $hier_obj feature_ram
 
   # Create instance: jtag_axi_0, and set properties
   set jtag_axi_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:jtag_axi jtag_axi_0 ]
+  set_property -dict [ list \
+   CONFIG.M_AXI_ADDR_WIDTH {32} \
+ ] $jtag_axi_0
 
   # Create instance: pcie_axi_bridge
   create_hier_cell_pcie_axi_bridge $hier_obj pcie_axi_bridge
 
   # Create interface connections
-  connect_bd_intf_net -intf_net S_AXI_BRIDGE_1 [get_bd_intf_pins S_AXI_BRIDGE] [get_bd_intf_pins pcie_axi_bridge/S_AXI]
   connect_bd_intf_net -intf_net axi_interconnect_0_M00_AXI [get_bd_intf_pins axi_interconnect_0/M00_AXI] [get_bd_intf_pins feature_ram/S_AXI]
   connect_bd_intf_net -intf_net axi_vip_0_M_AXI [get_bd_intf_pins axi_interconnect_0/S01_AXI] [get_bd_intf_pins axi_vip_0/M_AXI]
+  connect_bd_intf_net -intf_net axi_vip_1_M_AXI [get_bd_intf_pins axi_vip_1/M_AXI] [get_bd_intf_pins pcie_axi_bridge/S_AXI]
   connect_bd_intf_net -intf_net jtag_axi_0_M_AXI [get_bd_intf_pins axi_vip_0/S_AXI] [get_bd_intf_pins jtag_axi_0/M_AXI]
   connect_bd_intf_net -intf_net pcie3_ultrascale_0_pcie_7x_mgt [get_bd_intf_pins pci_express] [get_bd_intf_pins pcie_axi_bridge/pci_express]
   connect_bd_intf_net -intf_net pcie_2_axilite_0_m_axi_1 [get_bd_intf_pins axi_interconnect_0/S00_AXI] [get_bd_intf_pins pcie_axi_bridge/M_AXI]
   connect_bd_intf_net -intf_net pcie_refclk_1 [get_bd_intf_pins pcie_refclk] [get_bd_intf_pins pcie_axi_bridge/pcie_refclk]
 
   # Create port connections
-  connect_bd_net -net qdma_0_axi_aclk [get_bd_pins axi_aclk_port_data] [get_bd_pins axi_interconnect_0/ACLK] [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins axi_interconnect_0/S00_ACLK] [get_bd_pins axi_interconnect_0/S01_ACLK] [get_bd_pins axi_vip_0/aclk] [get_bd_pins feature_ram/axi_aclk_role_ctrl] [get_bd_pins jtag_axi_0/aclk] [get_bd_pins pcie_axi_bridge/axi_aclk_port_data]
-  connect_bd_net -net qdma_0_axi_aresetn [get_bd_pins axi_aresetn_port_data] [get_bd_pins axi_interconnect_0/ARESETN] [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins axi_interconnect_0/S00_ARESETN] [get_bd_pins axi_interconnect_0/S01_ARESETN] [get_bd_pins axi_vip_0/aresetn] [get_bd_pins feature_ram/axi_aresetn_role_ctrl] [get_bd_pins jtag_axi_0/aresetn] [get_bd_pins pcie_axi_bridge/axi_aresetn_port_data]
+  connect_bd_net -net qdma_0_axi_aclk [get_bd_pins axi_aclk_port_data] [get_bd_pins axi_interconnect_0/ACLK] [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins axi_interconnect_0/S00_ACLK] [get_bd_pins axi_interconnect_0/S01_ACLK] [get_bd_pins axi_vip_0/aclk] [get_bd_pins axi_vip_1/aclk] [get_bd_pins feature_ram/axi_aclk_role_ctrl] [get_bd_pins jtag_axi_0/aclk] [get_bd_pins pcie_axi_bridge/axi_aclk_port_data]
+  connect_bd_net -net qdma_0_axi_aresetn [get_bd_pins axi_aresetn_port_data] [get_bd_pins axi_interconnect_0/ARESETN] [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins axi_interconnect_0/S00_ARESETN] [get_bd_pins axi_interconnect_0/S01_ARESETN] [get_bd_pins axi_vip_0/aresetn] [get_bd_pins axi_vip_1/aresetn] [get_bd_pins feature_ram/axi_aresetn_role_ctrl] [get_bd_pins jtag_axi_0/aresetn] [get_bd_pins pcie_axi_bridge/axi_aresetn_port_data]
   connect_bd_net -net sys_reset_0_1 [get_bd_pins pcie_perstn] [get_bd_pins pcie_axi_bridge/pcie_perstn]
 
   # Restore current instance

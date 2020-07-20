@@ -26,10 +26,10 @@
 * siganl, if user wants to create his own ready signal, please refer task user_gen_rready 
 ***************************************************************************************************/
 import axi_vip_pkg::*;
-import shell_region_axi_vip_0_0_pkg::*;
+import shell_region_axi_vip_1_0_pkg::*;
 
 
-module axi_vip_0_passthrough_mst_stimulus();
+module axi_vip_1_passthrough_mst_stimulus();
 
   integer file, r;
   reg [80*8:1] command;
@@ -75,7 +75,7 @@ module axi_vip_0_passthrough_mst_stimulus();
   * Then click CONFIG under Properties window and Component_Name will be shown
   * More details please refer PG267 for more details
   *************************************************************************************************/
-  shell_region_axi_vip_0_0_passthrough_t              agent;
+  shell_region_axi_vip_1_0_passthrough_t              agent;
 
   initial begin
    /***********************************************************************************************
@@ -84,7 +84,7 @@ module axi_vip_0_passthrough_mst_stimulus();
     * "Xilinx AXI VIP Found at Path: my_ip_exdes_tb.DUT.ex_design.axi_vip_mst.inst" will be printed 
     * out. Pass this path to the new function. 
     ***********************************************************************************************/
-    agent = new("passthrough vip agent",DUT.shell_region_i.FIM.FIU.axi_vip_0.inst.IF);
+    agent = new("passthrough vip agent",DUT.shell_region_i.FIM.FIU.axi_vip_1.inst.IF);
     
     /***********************************************************************************************   
     * Set tag for agents for easy debug especially multiple agents are called in one testbench
@@ -99,7 +99,7 @@ module axi_vip_0_passthrough_mst_stimulus();
     ***********************************************************************************************/
     agent.set_verbosity(0);
 
-    DUT.shell_region_i.FIM.FIU.axi_vip_0.inst.set_master_mode();  //  Switch passthrough agent 
+    DUT.shell_region_i.FIM.FIU.axi_vip_1.inst.set_master_mode();  //  Switch passthrough agent 
                                                                //into run time master mode
     agent.start_master();                                     //agent starts to run
 
@@ -220,11 +220,13 @@ module axi_vip_0_passthrough_mst_stimulus();
 //    agent.wait_mst_drivers_idle();           // Wait mst drivers are in idle then stop the simulation
     
     
-    
-    file = $fopen("csrinit_trace.txt","r");
+    @(posedge test_top.csr_drv_okdone);
+    @(posedge test_top.csr_que_notify);
+
+    file = $fopen("dmatran_trace.txt","r");
     if (file == 0)
     begin
-        $display("Failed to open csrinit_trace playback file!");
+        $display("Failed to open dmatran_trace playback file!");
     end
     
     while (!$feof(file))
@@ -234,6 +236,7 @@ module axi_vip_0_passthrough_mst_stimulus();
         "rd":
         begin
             //cpu_rd(data1);
+	    debug_trace_rd(data1+32'h`PCIE_BAR_MAP);
             $display("trace_rd mem[%8h] = %8h", data1, data2);
         end
         "wr":
@@ -259,19 +262,115 @@ module axi_vip_0_passthrough_mst_stimulus();
 //    end 
     //$finish;
   end
-  
+
   task debug_trace_wr(input bit[31:0] addr, input bit[31:0] data);
-      single_write_transaction_api("single write with api",
+      single_write_transaction_sync("single write with sync",
                                      .id(0),
                                      .addr(addr),
-                                     .len(0), 
+                                     .len(0),
                                      .size(xil_axi_size_t'(xil_clog2((32)/8))),
                                      .burst(XIL_AXI_BURST_TYPE_INCR),
                                      .wuser(0),
-                                     .awuser(0), 
+                                     .awuser(0),
                                      .data(data)
                                     );
   endtask : debug_trace_wr
+
+  task debug_trace_rd(input bit[31:0] addr);
+      single_read_transaction_sync("single read with sync",
+                                     .id(0),
+                                     .addr(addr),
+                                     .len(0),
+                                     .size(xil_axi_size_t'(xil_clog2((32)/8))),
+                                     .burst(XIL_AXI_BURST_TYPE_INCR)
+                                     );
+  endtask : debug_trace_rd
+
+  /************************************************************************************************
+  *  task single_write_transaction_sync is to create a single write transaction, fill in transaction 
+  *  by using APIs and send it to write driver.
+  *   1. declare write transction
+  *   2. Create the write transaction
+  *   3. set addr, burst,ID,length,size by calling set_write_cmd(addr, burst,ID,length,size), 
+  *   4. set prot.lock, cache,region and qos
+  *   5. set beats
+  *   6. set AWUSER if AWUSER_WIDH is bigger than 0
+  *   7. set WUSER if WUSR_WIDTH is bigger than 0
+  *************************************************************************************************/
+  task automatic single_write_transaction_sync (
+                                input string                     name ="single_write_sync",
+                                input xil_axi_uint               id =0,
+                                input xil_axi_ulong              addr =0,
+                                input xil_axi_len_t              len =0,
+                                input xil_axi_size_t             size =xil_axi_size_t'(xil_clog2((32)/8)),
+                                input xil_axi_burst_t            burst =XIL_AXI_BURST_TYPE_INCR,
+                                input xil_axi_lock_t             lock = XIL_AXI_ALOCK_NOLOCK,
+                                input xil_axi_cache_t            cache =3,
+                                input xil_axi_prot_t             prot =0,
+                                input xil_axi_region_t           region =0,
+                                input xil_axi_qos_t              qos =0,
+                                input xil_axi_data_beat [255:0]  wuser =0,
+                                input xil_axi_data_beat          awuser =0,
+                                input bit [32767:0]              data =0
+                                                );
+    axi_transaction                               wr_trans;
+    xil_axi_data_beat                             DataBeat_for_write[];
+    bit[8*4096-1:0]                               data_block_for_write;
+
+    wr_trans = agent.mst_wr_driver.create_transaction(name);
+    wr_trans.set_write_cmd(addr,burst,id,len,size);
+    wr_trans.set_prot(prot);
+    wr_trans.set_lock(lock);
+    wr_trans.set_cache(cache);
+    wr_trans.set_region(region);
+    wr_trans.set_qos(qos);
+    wr_trans.set_data_block(data);
+    //agent.mst_wr_driver.send(wr_trans);   
+
+    get_wr_data_beat_back(wr_trans, DataBeat_for_write);
+    data_block_for_write = wr_trans.get_data_block();
+  endtask  : single_write_transaction_sync
+
+  /************************************************************************************************
+  *  task single_read_transaction_sync is to create a single read transaction, fill in command with user
+  *  inputs and send it to read driver.
+  *   1. declare read transction
+  *   2. Create the read transaction
+  *   3. set addr, burst,ID,length,size by calling set_read_cmd(addr, burst,ID,length,size), 
+  *   4. set prot.lock, cache,region and qos
+  *   5. set ARUSER if ARUSER_WIDH is bigger than 0
+  *************************************************************************************************/
+
+  task automatic single_read_transaction_sync (
+                                    input string                     name ="single_read_sync",
+                                    input xil_axi_uint               id =0,
+                                    input xil_axi_ulong              addr =0,
+                                    input xil_axi_len_t              len =0,
+                                    input xil_axi_size_t             size =xil_axi_size_t'(xil_clog2((32)/8)),
+                                    input xil_axi_burst_t            burst =XIL_AXI_BURST_TYPE_INCR,
+                                    input xil_axi_lock_t             lock =XIL_AXI_ALOCK_NOLOCK ,
+                                    input xil_axi_cache_t            cache =3,
+                                    input xil_axi_prot_t             prot =0,
+                                    input xil_axi_region_t           region =0,
+                                    input xil_axi_qos_t              qos =0,
+                                    input xil_axi_data_beat          aruser =0
+                                                );
+    axi_transaction                               rd_trans;
+    xil_axi_data_beat                             DataBeat_for_read[];
+    bit[8*4096-1:0]                               data_block_for_read;
+
+    rd_trans = agent.mst_rd_driver.create_transaction(name);
+    rd_trans.set_read_cmd(addr,burst,id,len,size);
+    rd_trans.set_prot(prot);
+    rd_trans.set_lock(lock);
+    rd_trans.set_cache(cache);
+    rd_trans.set_region(region);
+    rd_trans.set_qos(qos);
+    //agent.mst_rd_driver.send(rd_trans);   
+
+    get_rd_data_beat_back(rd_trans,DataBeat_for_read);
+    data_block_for_read = rd_trans.get_data_block();
+  endtask  : single_read_transaction_sync
 
   /*************************************************************************************************
   * Fully randomization of transaction

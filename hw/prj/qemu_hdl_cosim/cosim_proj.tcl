@@ -15,8 +15,12 @@ set_property FILE_TYPE SystemVerilog [get_files                  ../../src/qemu_
 set_property top test_top [get_filesets sim_1]
 add_files -fileset sim_1 -norecurse                             {../../src/qemu_hdl_cosim/axi_vip/axi_vip_0_passthrough_mst_stimulus.sv}
 set_property file_type {Verilog Header} [get_files               ../../src/qemu_hdl_cosim/axi_vip/axi_vip_0_passthrough_mst_stimulus.sv]
-add_files -fileset sim_1 -norecurse                              ../../src/qemu_hdl_cosim/axi_vip/debug_trace.txt
-set_property file_type {Memory Initialization Files} [get_files  ../../src/qemu_hdl_cosim/axi_vip/debug_trace.txt]
+add_files -fileset sim_1 -norecurse                              ../../src/qemu_hdl_cosim/axi_vip/csrinit_trace.txt
+set_property file_type {Memory Initialization Files} [get_files  ../../src/qemu_hdl_cosim/axi_vip/csrinit_trace.txt]
+add_files -fileset sim_1 -norecurse                             {../../src/qemu_hdl_cosim/axi_vip/axi_vip_1_passthrough_mst_stimulus.sv}
+set_property file_type {Verilog Header} [get_files               ../../src/qemu_hdl_cosim/axi_vip/axi_vip_1_passthrough_mst_stimulus.sv]
+add_files -fileset sim_1 -norecurse                              ../../src/qemu_hdl_cosim/axi_vip/dmatran_trace.txt
+set_property file_type {Memory Initialization Files} [get_files  ../../src/qemu_hdl_cosim/axi_vip/dmatran_trace.txt]
 set_property top_lib xil_defaultlib [get_filesets sim_1]
 
 update_compile_order -fileset sources_1

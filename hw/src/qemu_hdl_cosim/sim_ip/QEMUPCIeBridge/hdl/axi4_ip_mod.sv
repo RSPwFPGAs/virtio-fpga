@@ -2,7 +2,7 @@
 module axi4_ip
 #(
     parameter   TAGW            = 3
-,               ADRW            = 32
+,               ADRW            = 64
 ,               DATW            = 256
 ,               SIZE            = 3'b101        // always refer to DATW
 ,               STBW            = (DATW/8)
