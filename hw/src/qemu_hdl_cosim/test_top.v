@@ -29,9 +29,6 @@ shell_region_wrapper DUT (
   .pcie_refclk_clk_p (PCIE_CLK_P)
 );
 
-wire csr_drv_okdone = test_top.DUT.shell_region_i.FIM.FIU.feature_ram.virtio_csr_0.inst.csr_drv_ok;
-wire csr_que_notify = test_top.DUT.shell_region_i.FIM.FIU.feature_ram.virtio_csr_0.inst.csr_access_102B_pulse;
-
 // instantiate vip master
 //  axi_vip_0_exdes_generic  generic_tb();
   axi_vip_0_passthrough_mst_stimulus mst_axilite_toCSR();  // for initialization of CSR

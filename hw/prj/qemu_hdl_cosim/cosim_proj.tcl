@@ -17,10 +17,14 @@ add_files -fileset sim_1 -norecurse                             {../../src/qemu_
 set_property file_type {Verilog Header} [get_files               ../../src/qemu_hdl_cosim/axi_vip/axi_vip_0_passthrough_mst_stimulus.sv]
 add_files -fileset sim_1 -norecurse                              ../../src/qemu_hdl_cosim/axi_vip/csrinit_trace.txt
 set_property file_type {Memory Initialization Files} [get_files  ../../src/qemu_hdl_cosim/axi_vip/csrinit_trace.txt]
+
 add_files -fileset sim_1 -norecurse                             {../../src/qemu_hdl_cosim/axi_vip/axi_vip_1_passthrough_mst_stimulus.sv}
 set_property file_type {Verilog Header} [get_files               ../../src/qemu_hdl_cosim/axi_vip/axi_vip_1_passthrough_mst_stimulus.sv]
-add_files -fileset sim_1 -norecurse                              ../../src/qemu_hdl_cosim/axi_vip/dmatran_trace.txt
-set_property file_type {Memory Initialization Files} [get_files  ../../src/qemu_hdl_cosim/axi_vip/dmatran_trace.txt]
+add_files -fileset sim_1 -norecurse                              ../../src/qemu_hdl_cosim/axi_vip/dma_transaction.vh
+add_files -fileset sim_1 -norecurse                              ../../src/qemu_hdl_cosim/axi_vip/dma_transaction_for_queue_notify.v
+add_files -fileset sim_1 -norecurse                              ../../src/qemu_hdl_cosim/axi_vip/dma_transaction_for_queue_notify.txt
+set_property file_type {Memory Initialization Files} [get_files  ../../src/qemu_hdl_cosim/axi_vip/dma_transaction_for_queue_notify.txt]
+
 set_property top_lib xil_defaultlib [get_filesets sim_1]
 
 update_compile_order -fileset sources_1

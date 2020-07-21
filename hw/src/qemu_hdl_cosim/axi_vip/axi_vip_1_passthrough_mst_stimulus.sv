@@ -28,7 +28,6 @@
 import axi_vip_pkg::*;
 import shell_region_axi_vip_1_0_pkg::*;
 
-
 module axi_vip_1_passthrough_mst_stimulus();
 
   integer file, r;
@@ -103,164 +102,16 @@ module axi_vip_1_passthrough_mst_stimulus();
                                                                //into run time master mode
     agent.start_master();                                     //agent starts to run
 
-//    // Parallel write/read transaction generation 
-//    fork                                
-  
-//      begin  
-//        // single write transaction with fully randomization
-//        multiple_write_transaction_full_rand ("single write",1);
-         
-//        mtestWID = $urandom_range(0,(1<<(0)-1)); 
-//        mtestWADDR = 0;
-//        mtestWBurstLength = 0;
-//        mtestWDataSize = xil_axi_size_t'(xil_clog2((32)/8));
-//        mtestWBurstType = XIL_AXI_BURST_TYPE_INCR;
-//        mtestWData = $urandom();
-//        //single write transaction filled in user inputs through API 
-//        single_write_transaction_api("single write with api",
-//                                     .id(mtestWID),
-//                                     .addr(mtestWADDR),
-//                                     .len(mtestWBurstLength), 
-//                                     .size(mtestWDataSize),
-//                                     .burst(mtestWBurstType),
-//                                     .wuser(mtestWUSER),
-//                                     .awuser(mtestAWUSER), 
-//                                     .data(mtestWData)
-//                                     );
+    @(posedge test_top.DUT.shell_region_i.FIM.FIU.feature_ram.virtio_csr_0.inst.csr_drv_ok);
 
-//        //multiple write transactions with the same inline randomization 
-//        multiple_write_transaction_partial_rand(.num_xfer(2),
-//                                                .start_addr(mtestWADDR),
-//                                                .id(mtestWID),
-//                                                .len(mtestWBurstLength),
-//                                                .size(mtestWDataSize),
-//                                                .burst(mtestWBurstType),
-//                                                .no_xfer_delays(1)
-//                                               );
-//      end
- 
-//      begin
-//        //single read transaction with fully randomization
-//        multiple_read_transaction_full_rand ("single read",1);
-
-//        mtestRID = $urandom_range(0,(1<<(0)-1));
-//        mtestRADDR = $urandom_range(0,(1<<(32)-1));
-//        mtestRBurstLength = 0;
-//        mtestRDataSize = xil_axi_size_t'(xil_clog2((32)/8)); 
-//        mtestRBurstType = XIL_AXI_BURST_TYPE_INCR;
-//        //single read transaction filled in user inputs through API 
-//        single_read_transaction_api("single read with api",
-//                                     .id(mtestRID),
-//                                     .addr(mtestRADDR),
-//                                     .len(mtestRBurstLength), 
-//                                     .size(mtestRDataSize),
-//                                     .burst(mtestRBurstType)
-//                                     );
-
-//        //multiple read transaction with the same inline randomization 
-//        multiple_read_transaction_partial_rand( .num_xfer(2),
-//                                                .start_addr(mtestRADDR),
-//                                                .id(mtestRID),
-//                                                .len(mtestRBurstLength),
-//                                                .size(mtestRDataSize),
-//                                                .burst(mtestRBurstType),
-//                                                .no_xfer_delays(1)
-//                                               ); 
-//        //get read data back from driver
-//        rd_trans = agent.mst_rd_driver.create_transaction("read transaction with randomization for getting data back");
-//        fill_transaction_with_fully_randomization(rd_trans);
-//        //get read data beat back from driver
-//        get_rd_data_beat_back(rd_trans,Rdatabeat);
-//        //get read data block back from driver
-//        get_rd_data_block_back(rd_trans,Rdatablock);
-//      end  
-//    join
-
-//    agent.wait_mst_drivers_idle();           // Wait mst drivers are in idle 
-   
- 
-//    //Below shows write two transactions in and then read them back
-
-//    mtestWID = $urandom_range(0,(1<<(0)-1)); 
-//    mtestWADDR = 0;
-//    mtestWBurstLength = 0;
-//    mtestWDataSize = xil_axi_size_t'(xil_clog2((32)/8));
-//    mtestWBurstType = XIL_AXI_BURST_TYPE_INCR;
-//    multiple_write_in_then_read_back(.num_xfer(2),
-//                                     .start_addr(mtestWADDR),
-//                                     .id(mtestWID),
-//                                     .len(mtestWBurstLength),
-//                                     .size(mtestWDataSize),
-//                                     .burst(mtestWBurstType),
-//                                     .no_xfer_delays(1)
-//                                    );  
-
-//    agent.wait_mst_drivers_idle();           // Wait mst drivers are in idle then stop the simulation
-
-
-
-//    mtestWID = $urandom_range(0,(1<<(0)-1)); 
-//    mtestWADDR = 0;
-//    mtestWBurstLength = 0;
-//    mtestWDataSize = xil_axi_size_t'(xil_clog2((32)/8));
-//    mtestWBurstType = XIL_AXI_BURST_TYPE_INCR;
-//    mtestWData = $urandom();
-//    //single write transaction filled in user inputs through API 
-//    single_write_transaction_api("single write with api",
-//                                 .id(mtestWID),
-//                                 .addr(mtestWADDR),
-//                                 .len(mtestWBurstLength), 
-//                                 .size(mtestWDataSize),
-//                                 .burst(mtestWBurstType),
-//                                 .wuser(mtestWUSER),
-//                                 .awuser(mtestAWUSER), 
-//                                 .data(mtestWData)
-//                                );
-
-//    agent.wait_mst_drivers_idle();           // Wait mst drivers are in idle then stop the simulation
-    
-    
-    @(posedge test_top.csr_drv_okdone);
-    @(posedge test_top.csr_que_notify);
-
-    file = $fopen("dmatran_trace.txt","r");
-    if (file == 0)
-    begin
-        $display("Failed to open dmatran_trace playback file!");
-    end
-    
-    while (!$feof(file))
-    begin
-        r = $fscanf(file, " %s %h %h\n", command, data1, data2);
-        case (command)
-        "rd":
-        begin
-            //cpu_rd(data1);
-	    debug_trace_rd(data1+32'h`PCIE_BAR_MAP);
-            $display("trace_rd mem[%8h] = %8h", data1, data2);
-        end
-        "wr":
-        begin
-            //cpu_wr(data1,data2);
-            debug_trace_wr(data1+32'h`PCIE_BAR_MAP,data2);
-            $display("trace_wr mem[%8h] = %8h", data1+32'h`PCIE_BAR_MAP, data2);
-        end
-        default:
-            $display("Trace Playback Unknown command '%0s'", command);
-        endcase
-    end
-
-    $fclose(file);    
-    
     agent.wait_mst_drivers_idle();           // Wait mst drivers are in idle then stop the simulation
-    
    
-//    if(generic_tb.error_cnt ==0) begin
-//      $display("EXAMPLE TEST DONE : Test Completed Successfully");
-//    end else begin  
-//      $display("EXAMPLE TEST DONE ",$sformatf("Test Failed: %d Comparison Failed", generic_tb.error_cnt));
-//    end 
-    //$finish;
+  end
+
+  always begin
+    @(posedge test_top.DUT.shell_region_i.FIM.FIU.feature_ram.virtio_csr_0.inst.csr_access_10B2);
+    if (test_top.DUT.shell_region_i.FIM.FIU.feature_ram.virtio_csr_0.inst.csr_drv_ok)
+      `include "dma_transaction.vh"
   end
 
   task debug_trace_wr(input bit[31:0] addr, input bit[31:0] data);
@@ -276,13 +127,14 @@ module axi_vip_1_passthrough_mst_stimulus();
                                     );
   endtask : debug_trace_wr
 
-  task debug_trace_rd(input bit[31:0] addr);
+  task debug_trace_rd(input bit[31:0] addr, output bit[31:0] data);
       single_read_transaction_sync("single read with sync",
                                      .id(0),
                                      .addr(addr),
                                      .len(0),
                                      .size(xil_axi_size_t'(xil_clog2((32)/8))),
-                                     .burst(XIL_AXI_BURST_TYPE_INCR)
+                                     .burst(XIL_AXI_BURST_TYPE_INCR),
+				     .data(data)
                                      );
   endtask : debug_trace_rd
 
@@ -353,7 +205,8 @@ module axi_vip_1_passthrough_mst_stimulus();
                                     input xil_axi_prot_t             prot =0,
                                     input xil_axi_region_t           region =0,
                                     input xil_axi_qos_t              qos =0,
-                                    input xil_axi_data_beat          aruser =0
+                                    input xil_axi_data_beat          aruser =0,
+                                   output bit [32767:0]              data
                                                 );
     axi_transaction                               rd_trans;
     xil_axi_data_beat                             DataBeat_for_read[];
@@ -370,6 +223,7 @@ module axi_vip_1_passthrough_mst_stimulus();
 
     get_rd_data_beat_back(rd_trans,DataBeat_for_read);
     data_block_for_read = rd_trans.get_data_block();
+    data = data_block_for_read;
   endtask  : single_read_transaction_sync
 
   /*************************************************************************************************

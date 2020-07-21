@@ -115,37 +115,67 @@ module virtio_csr (
 
   // implement interactive logic with Host Driver
 
-  reg [15:0] csr_reg_082B [3-1:0];  // 0x08, Queue Address
-  reg [15:0] csr_reg_0e2B;          // 0x0e, Queue Select 
-  wire csr_access_082B = (addr == 'h08)? 1'b1: 1'b0;
+  reg [15:0] csr_reg_0eB2;          // 0x0e, 2Byte, Queue Select 
   always @(posedge clk or posedge rst) begin
     if (rst) begin
-      csr_reg_0e2B <= 16'h0000;
-      csr_reg_082B[0] <= 16'h0000;
-      csr_reg_082B[1] <= 16'h0000;
-      csr_reg_082B[2] <= 16'h0000;
+      csr_reg_0eB2    <= 16'h0000;
     end else begin
-      csr_reg_0e2B               <= (addr == 'h0c && en && we == 'b1100)? din[31:16]: csr_reg_0e2B;
-      csr_reg_082B[csr_reg_0e2B] <= (addr == 'h08 && en && we == 'b0011)? din[16: 0]: csr_reg_082B[csr_reg_0e2B];
+      csr_reg_0eB2               <= (addr == 'h0c && en && we == 'b1100)? din[31:16]: csr_reg_0eB2;
     end 
   end
 
-  reg [15:0] csr_reg_102B;  // 0x10, Queue Notify
-  wire csr_access_102B = (addr == 'h10 && en && we == 'b0011)? 1'b1: 1'b0;
-  reg  csr_access_102B_d1;
+  reg [31:0] csr_reg_08B4 [3-1:0];  // 0x08, 4Byte, Queue Address
   always @(posedge clk or posedge rst) begin
     if (rst) begin
-      csr_access_102B_d1 <= 1'b0;
+      csr_reg_08B4[0] <= 32'h00000000;
+      csr_reg_08B4[1] <= 32'h00000000;
+      csr_reg_08B4[2] <= 32'h00000000;
     end else begin
-      csr_access_102B_d1 <= csr_access_102B;
-    end
+      csr_reg_08B4[csr_reg_0eB2] <= (addr == 'h08 && en && we == 'b0011)? din[31: 0]: csr_reg_08B4[csr_reg_0eB2];
+    end 
   end
-  wire csr_access_102B_pulse = csr_access_102B && !csr_access_102B_d1;
+  wire csr_access_08B4 = (addr == 'h08)? 1'b1: 1'b0;
+  
+  reg [15:0] csr_reg_10B2;          // 0x10, 2Byte, Queue Notify
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+      csr_reg_10B2 <= 8'h00;
+    end else begin
+      csr_reg_10B2 <= (addr == 'h10 && en && we == 'b0011)? din[15:0]: csr_reg_10B2;
+    end 
+  end
+  wire csr_access_10B2 = (addr == 'h10 && en && we == 'b0011)? 1'b1: 1'b0;
  
-  reg [7:0] csr_reg_121B;  // 0x12, Device Status
-  wire csr_access_121B = (addr == 'h10 && en && we == 'b0100)? 1'b1: 1'b0;
-  wire csr_drv_ok      = csr_access_121B && (din[18] == 1'b1);
+  reg [7:0] csr_reg_12B1;           // 0x12, 1Byte, Device Status
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+      csr_reg_12B1 <= 8'h00;
+    end else begin
+      csr_reg_12B1 <= (addr == 'h10 && en && we == 'b0100)? din[23:16]: csr_reg_12B1;
+    end 
+  end
+  wire csr_drv_ok      = csr_reg_12B1[2];
 
+  reg [15:0] csr_reg_14B2;           // 0x14, 2Byte, Config MSIX Vector
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+      csr_reg_14B2 <= 16'h0000;
+    end else begin
+      csr_reg_14B2 <= (addr == 'h14 && en && we == 'b0011)? din[15:0]: csr_reg_14B2;
+    end 
+  end
+
+  reg [15:0] csr_reg_16B2 [3-1:0];   // 0x16, 2Byte, Queue MSIX Vector
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+      csr_reg_16B2[0] <= 16'h0000;
+      csr_reg_16B2[1] <= 16'h0000;
+      csr_reg_16B2[2] <= 16'h0000;
+    end else begin
+      csr_reg_16B2[csr_reg_0eB2] <= (addr == 'h14 && en && we == 'b1100)? din[31:16]: csr_reg_16B2[csr_reg_0eB2];
+    end 
+  end
+  wire csr_access_14B4 = (addr == 'h14)? 1'b1: 1'b0;
 
 
   // map the interface signals
@@ -155,10 +185,9 @@ module virtio_csr (
   assign wea = we;
   assign addra = addr;
   assign dina = din;
-  assign dout = (csr_access_082B)? csr_reg_082B[csr_reg_0e2B]: douta;  
-
-
-
+  assign dout = (csr_access_08B4)?  csr_reg_08B4[csr_reg_0eB2]:
+	       ((csr_access_14B4)? {csr_reg_16B2[csr_reg_0eB2], csr_reg_14B2}:
+	        douta);  
 
 endmodule
 

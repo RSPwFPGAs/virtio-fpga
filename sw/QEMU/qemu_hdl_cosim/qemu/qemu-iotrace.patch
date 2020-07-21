@@ -1,6 +1,6 @@
 diff -Naur qemu-2.10.0-rc3.cosim-patched/hw/misc/accelerator_pcie.c qemu-2.10.0-rc3/hw/misc/accelerator_pcie.c
---- qemu-2.10.0-rc3.cosim-patched/hw/misc/accelerator_pcie.c	2020-07-17 22:49:00.644573212 +0800
-+++ qemu-2.10.0-rc3/hw/misc/accelerator_pcie.c	2020-07-17 22:49:37.974743702 +0800
+--- qemu-2.10.0-rc3.cosim-patched/hw/misc/accelerator_pcie.c	2020-07-21 22:00:18.009673814 +0800
++++ qemu-2.10.0-rc3/hw/misc/accelerator_pcie.c	2020-07-21 22:03:16.920793433 +0800
 @@ -64,6 +64,7 @@
  #define MMIO_WRITE_BAR(_num)                                                   \
      static void mmio_write_bar##_num(void *opaque, hwaddr addr, uint64_t val,  \
@@ -17,9 +17,36 @@ diff -Naur qemu-2.10.0-rc3.cosim-patched/hw/misc/accelerator_pcie.c qemu-2.10.0-
          return data;                                                           \
      }
  
+@@ -197,7 +199,9 @@
+         case READ:
+             ACCELERATOR_DPRINTF("Host read request\n");
+             cpu_physical_memory_read(addr, acc_data->data, acc_data->data_size);
+-            // Send frame
++	    printf("accl:  dma_rd: @0x%016lx(%d) =0x", addr, acc_data->data_size);
++	    for (int d = acc_data->data_size; d > 0; d--) {printf("%02x", acc_data->data[d-1]);} printf("\n");
++	    // Send frame
+             int rv = zframe_send(&frame, s->hdl_resp, ZFRAME_REUSE);
+             if (rv != 0) {
+                 ACCELERATOR_EPRINTF("HDL REQ ERROR %s:%d\n", __func__,
+@@ -206,11 +210,13 @@
+             break;
+         case WRITE:
+             ACCELERATOR_DPRINTF("Host write request\n");
+-            cpu_physical_memory_write(addr, acc_data->data,
+-                                      acc_data->data_size);
++            printf("accl:  dma_wr: @0x%016lx(%d) =0x", addr, acc_data->data_size);
++	    for (int d = acc_data->data_size; d > 0; d--) {printf("%02x", acc_data->data[d-1]);} printf("\n");
++            cpu_physical_memory_write(addr, acc_data->data, acc_data->data_size);
+             break;
+         case INTR:
+             ACCELERATOR_DPRINTF("Host intr request\n");
++            printf("accl: intr_wr: vec =0x%08x\n", acc_data->vector);
+             if (msix_enabled(dev))
+                 msix_notify(dev, acc_data->vector);
+             else
 diff -Naur qemu-2.10.0-rc3.cosim-patched/hw/virtio/virtio-pci.c qemu-2.10.0-rc3/hw/virtio/virtio-pci.c
---- qemu-2.10.0-rc3.cosim-patched/hw/virtio/virtio-pci.c	2020-07-17 22:49:00.652558269 +0800
-+++ qemu-2.10.0-rc3/hw/virtio/virtio-pci.c	2020-07-17 22:49:19.044736633 +0800
+--- qemu-2.10.0-rc3.cosim-patched/hw/virtio/virtio-pci.c	2020-07-21 22:00:18.013673684 +0800
++++ qemu-2.10.0-rc3/hw/virtio/virtio-pci.c	2020-07-21 22:03:10.304685328 +0800
 @@ -353,6 +353,8 @@
      VirtIOPCIProxy *proxy = opaque;
      VirtIODevice *vdev = virtio_bus_get_device(&proxy->bus);
