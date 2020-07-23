@@ -131,7 +131,7 @@ module virtio_csr (
       csr_reg_08B4[1] <= 32'h00000000;
       csr_reg_08B4[2] <= 32'h00000000;
     end else begin
-      csr_reg_08B4[csr_reg_0eB2] <= (addr == 'h08 && en && we == 'b0011)? din[31: 0]: csr_reg_08B4[csr_reg_0eB2];
+      csr_reg_08B4[csr_reg_0eB2] <= (addr == 'h08 && en && we == 'b1111)? din[31: 0]: csr_reg_08B4[csr_reg_0eB2];
     end 
   end
   wire csr_access_08B4 = (addr == 'h08)? 1'b1: 1'b0;
@@ -145,7 +145,7 @@ module virtio_csr (
     end 
   end
   wire csr_access_10B2 = (addr == 'h10 && en && we == 'b0011)? 1'b1: 1'b0;
- 
+
   reg [7:0] csr_reg_12B1;           // 0x12, 1Byte, Device Status
   always @(posedge clk or posedge rst) begin
     if (rst) begin

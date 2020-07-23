@@ -5,7 +5,7 @@ diff -Naur qemu-2.10.0-rc3.cosim-patched/hw/misc/accelerator_pcie.c qemu-2.10.0-
  #define MMIO_WRITE_BAR(_num)                                                   \
      static void mmio_write_bar##_num(void *opaque, hwaddr addr, uint64_t val,  \
                                       unsigned size) {                          \
-+        printf("accl: mmio_wr: @0x%016lx =0x%016lx\n", addr, val);             \
++        printf("accl: mmio_wr: @0x%016lx(%d) =0x%016lx\n", addr, size, val);   \
          ACCPCIeState *s = opaque;                                              \
          ACCData acc_req;                                                       \
          /*memset(&acc_req, 0, sizeof(ACCData));*/                              \
@@ -13,7 +13,7 @@ diff -Naur qemu-2.10.0-rc3.cosim-patched/hw/misc/accelerator_pcie.c qemu-2.10.0-
  		}																	   \
  		ACCELERATOR_DPRINTF("BAR[%d] RD %016lx:   %lx\n", _num, addr, data);   \
          zframe_destroy(&frame);                                                \
-+        printf("accl: mmio_rd: @0x%016lx =0x%016lx\n", addr, data);            \
++        printf("accl: mmio_rd: @0x%016lx(%d) =0x%016lx\n", addr, size, data);  \
          return data;                                                           \
      }
  

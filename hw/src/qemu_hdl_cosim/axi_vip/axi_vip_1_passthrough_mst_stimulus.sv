@@ -108,10 +108,12 @@ module axi_vip_1_passthrough_mst_stimulus();
    
   end
 
+  `define CSR_PATH test_top.DUT.shell_region_i.FIM.FIU.feature_ram.virtio_csr_0.inst
   always begin
-    @(posedge test_top.DUT.shell_region_i.FIM.FIU.feature_ram.virtio_csr_0.inst.csr_access_10B2);
-    if (test_top.DUT.shell_region_i.FIM.FIU.feature_ram.virtio_csr_0.inst.csr_drv_ok)
+    @(posedge `CSR_PATH.csr_access_10B2);
+    if (`CSR_PATH.csr_drv_ok) begin
       `include "dma_transaction.vh"
+    end
   end
 
   task debug_trace_wr(input bit[31:0] addr, input bit[31:0] data);
