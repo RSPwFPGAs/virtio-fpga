@@ -115,6 +115,17 @@ module virtio_csr (
 
   // implement interactive logic with Host Driver
 
+  reg [7:0] csr_reg_12B1;           // 0x12, 1Byte, Device Status
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+      csr_reg_12B1 <= 8'h00;
+    end else begin
+      csr_reg_12B1 <= (addr == 'h10 && en && we == 'b0100)? din[23:16]: csr_reg_12B1;
+    end 
+  end
+  wire csr_drv_ok      = csr_reg_12B1[2];
+  wire csr_rst         = (addr == 'h10 && en && we == 'b0100 && din[23:16] == 8'h00)? 1'b1: 1'b0;
+
   reg [15:0] csr_reg_0eB2;          // 0x0e, 2Byte, Queue Select 
   always @(posedge clk or posedge rst) begin
     if (rst) begin
@@ -125,8 +136,8 @@ module virtio_csr (
   end
 
   reg [31:0] csr_reg_08B4 [3-1:0];  // 0x08, 4Byte, Queue Address
-  always @(posedge clk or posedge rst) begin
-    if (rst) begin
+  always @(posedge clk) begin
+    if (csr_rst) begin              // soft reset
       csr_reg_08B4[0] <= 32'h00000000;
       csr_reg_08B4[1] <= 32'h00000000;
       csr_reg_08B4[2] <= 32'h00000000;
@@ -146,16 +157,6 @@ module virtio_csr (
   end
   wire csr_access_10B2 = (addr == 'h10 && en && we == 'b0011)? 1'b1: 1'b0;
 
-  reg [7:0] csr_reg_12B1;           // 0x12, 1Byte, Device Status
-  always @(posedge clk or posedge rst) begin
-    if (rst) begin
-      csr_reg_12B1 <= 8'h00;
-    end else begin
-      csr_reg_12B1 <= (addr == 'h10 && en && we == 'b0100)? din[23:16]: csr_reg_12B1;
-    end 
-  end
-  wire csr_drv_ok      = csr_reg_12B1[2];
-
   reg [15:0] csr_reg_14B2;           // 0x14, 2Byte, Config MSIX Vector
   always @(posedge clk or posedge rst) begin
     if (rst) begin
@@ -166,8 +167,8 @@ module virtio_csr (
   end
 
   reg [15:0] csr_reg_16B2 [3-1:0];   // 0x16, 2Byte, Queue MSIX Vector
-  always @(posedge clk or posedge rst) begin
-    if (rst) begin
+  always @(posedge clk) begin
+    if (csr_rst) begin               // soft reset
       csr_reg_16B2[0] <= 16'h0000;
       csr_reg_16B2[1] <= 16'h0000;
       csr_reg_16B2[2] <= 16'h0000;

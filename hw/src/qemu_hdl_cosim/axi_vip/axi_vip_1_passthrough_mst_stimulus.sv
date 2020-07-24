@@ -30,12 +30,6 @@ import shell_region_axi_vip_1_0_pkg::*;
 
 module axi_vip_1_passthrough_mst_stimulus();
 
-  integer file, r;
-  reg [80*8:1] command;
-  reg [31:0] data1;
-  reg [31:0] data2;
-
-
    /*************************************************************************************************
   * Declare variables which will be used in API and parital randomization for transaction generation
   * and data read back from driver.
@@ -108,20 +102,19 @@ module axi_vip_1_passthrough_mst_stimulus();
    
   end
 
-  `define CSR_PATH test_top.DUT.shell_region_i.FIM.FIU.feature_ram.virtio_csr_0.inst
-  always begin
-    @(posedge `CSR_PATH.csr_access_10B2);
-    if (`CSR_PATH.csr_drv_ok) begin
-      `include "dma_transaction.vh"
-    end
-  end
+/***************************
+* User defined logic begin
+***************************/
 
-  task debug_trace_wr(input bit[31:0] addr, input bit[31:0] data);
+  `include "dma_transaction.vh"
+
+
+  task debug_trace_wr(input bit[63:0] addr, input bit[8*4096-1:0] data, input xil_axi_len_t leng=0);
       single_write_transaction_sync("single write with sync",
                                      .id(0),
                                      .addr(addr),
-                                     .len(0),
-                                     .size(xil_axi_size_t'(xil_clog2((32)/8))),
+                                     .len(leng),
+                                     .size(xil_axi_size_t'(xil_clog2((256)/8))),
                                      .burst(XIL_AXI_BURST_TYPE_INCR),
                                      .wuser(0),
                                      .awuser(0),
@@ -129,12 +122,12 @@ module axi_vip_1_passthrough_mst_stimulus();
                                     );
   endtask : debug_trace_wr
 
-  task debug_trace_rd(input bit[31:0] addr, output bit[31:0] data);
+  task debug_trace_rd(input bit[63:0] addr, output bit[8*4096-1:0] data, input xil_axi_len_t leng=0);
       single_read_transaction_sync("single read with sync",
                                      .id(0),
                                      .addr(addr),
-                                     .len(0),
-                                     .size(xil_axi_size_t'(xil_clog2((32)/8))),
+                                     .len(leng),
+                                     .size(xil_axi_size_t'(xil_clog2((256)/8))),
                                      .burst(XIL_AXI_BURST_TYPE_INCR),
 				     .data(data)
                                      );
@@ -156,7 +149,7 @@ module axi_vip_1_passthrough_mst_stimulus();
                                 input xil_axi_uint               id =0,
                                 input xil_axi_ulong              addr =0,
                                 input xil_axi_len_t              len =0,
-                                input xil_axi_size_t             size =xil_axi_size_t'(xil_clog2((32)/8)),
+                                input xil_axi_size_t             size =xil_axi_size_t'(xil_clog2((256)/8)),
                                 input xil_axi_burst_t            burst =XIL_AXI_BURST_TYPE_INCR,
                                 input xil_axi_lock_t             lock = XIL_AXI_ALOCK_NOLOCK,
                                 input xil_axi_cache_t            cache =3,
@@ -200,7 +193,7 @@ module axi_vip_1_passthrough_mst_stimulus();
                                     input xil_axi_uint               id =0,
                                     input xil_axi_ulong              addr =0,
                                     input xil_axi_len_t              len =0,
-                                    input xil_axi_size_t             size =xil_axi_size_t'(xil_clog2((32)/8)),
+                                    input xil_axi_size_t             size =xil_axi_size_t'(xil_clog2((256)/8)),
                                     input xil_axi_burst_t            burst =XIL_AXI_BURST_TYPE_INCR,
                                     input xil_axi_lock_t             lock =XIL_AXI_ALOCK_NOLOCK ,
                                     input xil_axi_cache_t            cache =3,
@@ -227,6 +220,10 @@ module axi_vip_1_passthrough_mst_stimulus();
     data_block_for_read = rd_trans.get_data_block();
     data = data_block_for_read;
   endtask  : single_read_transaction_sync
+
+/***************************
+* User defined logic end 
+***************************/
 
   /*************************************************************************************************
   * Fully randomization of transaction
