@@ -16,15 +16,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="14458712371fs"></ZoomStartTime>
-      <ZoomEndTime time="15435055266fs"></ZoomEndTime>
-      <Cursor1Time time="14490000000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="167400000001fs"></ZoomEndTime>
+      <Cursor1Time time="25930000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="227"></NameColumnWidth>
-      <ValueColumnWidth column_width="114"></ValueColumnWidth>
+      <ValueColumnWidth column_width="94"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="167" />
+   <WVObjectSize size="174" />
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_axi_ctl_aclk">
       <obj_property name="ElementShortName">i_axi_ctl_aclk</obj_property>
       <obj_property name="ObjectShortName">i_axi_ctl_aclk</obj_property>
@@ -670,9 +670,17 @@
       <obj_property name="ElementShortName">csr_drv_ok</obj_property>
       <obj_property name="ObjectShortName">csr_drv_ok</obj_property>
    </wvobject>
+   <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/feature_ram/virtio_csr_0/inst/csr_rst">
+      <obj_property name="ElementShortName">csr_rst</obj_property>
+      <obj_property name="ObjectShortName">csr_rst</obj_property>
+   </wvobject>
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/feature_ram/virtio_csr_0/inst/csr_access_10B2">
       <obj_property name="ElementShortName">csr_access_10B2</obj_property>
       <obj_property name="ObjectShortName">csr_access_10B2</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/virt_queue_sel">
+      <obj_property name="ElementShortName">virt_queue_sel[15:0]</obj_property>
+      <obj_property name="ObjectShortName">virt_queue_sel[15:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/virt_queue_phy">
       <obj_property name="ElementShortName">virt_queue_phy[63:0]</obj_property>
@@ -690,8 +698,28 @@
       <obj_property name="ElementShortName">num_avail_entry[15:0]</obj_property>
       <obj_property name="ObjectShortName">num_avail_entry[15:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/descr_idx">
-      <obj_property name="ElementShortName">descr_idx[15:0]</obj_property>
-      <obj_property name="ObjectShortName">descr_idx[15:0]</obj_property>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/desc_idx">
+      <obj_property name="ElementShortName">desc_idx[15:0]</obj_property>
+      <obj_property name="ObjectShortName">desc_idx[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/desc_entry_phy">
+      <obj_property name="ElementShortName">desc_entry_phy[63:0]</obj_property>
+      <obj_property name="ObjectShortName">desc_entry_phy[63:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/desc_entry_len">
+      <obj_property name="ElementShortName">desc_entry_len[31:0]</obj_property>
+      <obj_property name="ObjectShortName">desc_entry_len[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/desc_entry_flg">
+      <obj_property name="ElementShortName">desc_entry_flg[15:0]</obj_property>
+      <obj_property name="ObjectShortName">desc_entry_flg[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/desc_entry_nxt">
+      <obj_property name="ElementShortName">desc_entry_nxt[15:0]</obj_property>
+      <obj_property name="ObjectShortName">desc_entry_nxt[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/data2">
+      <obj_property name="ElementShortName">data2[255:0]</obj_property>
+      <obj_property name="ObjectShortName">data2[255:0]</obj_property>
    </wvobject>
 </wave_config>
