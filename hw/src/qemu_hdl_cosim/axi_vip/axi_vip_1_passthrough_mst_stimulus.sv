@@ -114,7 +114,7 @@ module axi_vip_1_passthrough_mst_stimulus();
                                      .id(0),
                                      .addr(addr),
                                      .len(leng),
-                                     .size(xil_axi_size_t'(xil_clog2((256)/8))),
+                                     .size(xil_axi_size_t'(xil_clog2((32)/8))),
                                      .burst(XIL_AXI_BURST_TYPE_INCR),
                                      .wuser(0),
                                      .awuser(0),
@@ -127,7 +127,7 @@ module axi_vip_1_passthrough_mst_stimulus();
                                      .id(0),
                                      .addr(addr),
                                      .len(leng),
-                                     .size(xil_axi_size_t'(xil_clog2((256)/8))),
+                                     .size(xil_axi_size_t'(xil_clog2((32)/8))),
                                      .burst(XIL_AXI_BURST_TYPE_INCR),
 				     .data(data)
                                      );

@@ -17,14 +17,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="73300000001fs"></ZoomEndTime>
-      <Cursor1Time time="26650000000fs"></Cursor1Time>
+      <ZoomEndTime time="77450000001fs"></ZoomEndTime>
+      <Cursor1Time time="7472000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="227"></NameColumnWidth>
-      <ValueColumnWidth column_width="86"></ValueColumnWidth>
+      <ValueColumnWidth column_width="70"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="178" />
+   <WVObjectSize size="181" />
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_axi_ctl_aclk">
       <obj_property name="ElementShortName">i_axi_ctl_aclk</obj_property>
       <obj_property name="ObjectShortName">i_axi_ctl_aclk</obj_property>
@@ -329,14 +329,6 @@
       <obj_property name="ElementShortName">i_s_wid[2:0]</obj_property>
       <obj_property name="ObjectShortName">i_s_wid[2:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_s_wdata">
-      <obj_property name="ElementShortName">i_s_wdata[255:0]</obj_property>
-      <obj_property name="ObjectShortName">i_s_wdata[255:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_s_wlast">
-      <obj_property name="ElementShortName">i_s_wlast</obj_property>
-      <obj_property name="ObjectShortName">i_s_wlast</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_s_wstrb">
       <obj_property name="ElementShortName">i_s_wstrb[31:0]</obj_property>
       <obj_property name="ObjectShortName">i_s_wstrb[31:0]</obj_property>
@@ -348,6 +340,14 @@
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/o_s_wready">
       <obj_property name="ElementShortName">o_s_wready</obj_property>
       <obj_property name="ObjectShortName">o_s_wready</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_s_wlast">
+      <obj_property name="ElementShortName">i_s_wlast</obj_property>
+      <obj_property name="ObjectShortName">i_s_wlast</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_s_wdata">
+      <obj_property name="ElementShortName">i_s_wdata[255:0]</obj_property>
+      <obj_property name="ObjectShortName">i_s_wdata[255:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/o_s_bid">
       <obj_property name="ElementShortName">o_s_bid[2:0]</obj_property>
@@ -710,9 +710,13 @@
       <obj_property name="ElementShortName">curr_avail_idx[0:2][15:0]</obj_property>
       <obj_property name="ObjectShortName">curr_avail_idx[0:2][15:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/num_avail_entry">
-      <obj_property name="ElementShortName">num_avail_entry[15:0]</obj_property>
-      <obj_property name="ObjectShortName">num_avail_entry[15:0]</obj_property>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/num_avail_idx">
+      <obj_property name="ElementShortName">num_avail_idx[15:0]</obj_property>
+      <obj_property name="ObjectShortName">num_avail_idx[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/ith_avail_idx">
+      <obj_property name="ElementShortName">ith_avail_idx[7:0]</obj_property>
+      <obj_property name="ObjectShortName">ith_avail_idx[7:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/desc_idx">
       <obj_property name="ElementShortName">desc_idx[15:0]</obj_property>
@@ -734,8 +738,16 @@
       <obj_property name="ElementShortName">desc_entry_nxt[15:0]</obj_property>
       <obj_property name="ObjectShortName">desc_entry_nxt[15:0]</obj_property>
    </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/desc_chain_len">
+      <obj_property name="ElementShortName">desc_chain_len[31:0]</obj_property>
+      <obj_property name="ObjectShortName">desc_chain_len[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/data1">
+      <obj_property name="ElementShortName">data1[63:0]</obj_property>
+      <obj_property name="ObjectShortName">data1[63:0]</obj_property>
+   </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/data2">
-      <obj_property name="ElementShortName">data2[255:0]</obj_property>
-      <obj_property name="ObjectShortName">data2[255:0]</obj_property>
+      <obj_property name="ElementShortName">data2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">data2[31:0]</obj_property>
    </wvobject>
 </wave_config>
