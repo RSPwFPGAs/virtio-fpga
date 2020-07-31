@@ -48,6 +48,7 @@
   reg [63:0] desc_entry_phy = 0;
   reg [31:0] desc_entry_len = 0;
   reg [15:0] desc_entry_flg = 0;
+  reg desc_entry_flg_next, desc_entry_flg_writ, desc_entry_flg_indi;
   reg [15:0] desc_entry_nxt = 0;
   reg [31:0] desc_chain_len= 0;
 
@@ -129,10 +130,10 @@
         desc_idx = data1[1]? data2[31:16]: data2[15:0];
       
         // read the whole decriptor chain, following the NEXT flag+next
-        desc_entry_flg = 16'h1; 
+        desc_entry_flg_next = 1'b1; 
         desc_entry_nxt = desc_idx;
 	desc_chain_len = 0;
-        while (desc_entry_flg[0]) begin
+        while (desc_entry_flg_next) begin
           // read descriptor, num*chain_entry*16B
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+0; 
 	  debug_trace_rd(data1, data2);                                              $display("3.0, %d, %d", i, desc_entry_nxt);
@@ -151,24 +152,36 @@
 	  desc_entry_len = desc_entry[ 95: 64];
           desc_entry_flg = desc_entry[111: 96];
           desc_entry_nxt = desc_entry[127:112];
+          
+	  desc_entry_flg_next = desc_entry_flg[0];
+	  desc_entry_flg_writ = desc_entry_flg[1];
+	  desc_entry_flg_indi = desc_entry_flg[2];
+
 	  desc_chain_len = desc_chain_len + desc_entry_len;
-	  // TODO: read/write buffer
         end
       
-        // write used ring entry, len+id, num*8B
-        data1 = virt_queue_phy+(0+16*256+1*4096)+4+ith_avail_idx*8+0;
-        data2 = {16'd0, desc_idx};
-        debug_trace_wr(data1, data2);                                                 $display("4.0, %d", i);
-        data1 = virt_queue_phy+(0+16*256+1*4096)+4+ith_avail_idx*8+4;
-        data2 = desc_chain_len;
-        debug_trace_wr(data1, data2);                                                 $display("4.4, %d", i);
+	// TODO: read/write buffer, send/receive packets
+	//if (0) begin  // TODO: another thread to respond based on sent/received packets.
+	//if (!desc_entry_flg_writ) begin  // pretending to send out packets
+	if (1) begin  // pretending to send/receive packets
+          // write used ring entry, len+id, num*8B
+          data1 = virt_queue_phy+(0+16*256+1*4096)+4+ith_avail_idx*8+0;
+          data2 = {16'd0, desc_idx};
+          debug_trace_wr(data1, data2);                                                 $display("4.0, %d", i);
+          data1 = virt_queue_phy+(0+16*256+1*4096)+4+ith_avail_idx*8+4;
+          data2 = desc_entry_flg_writ? desc_chain_len: 0;//5.1.6.1
+          debug_trace_wr(data1, data2);                                                 $display("4.4, %d", i);
+        end
       end
       
-      // write used ring flags+index(), 2B+2B
-      data1 = virt_queue_phy+(0+16*256+1*4096)+0;
-      data2 = {next_avail_idx[virt_queue_sel], 16'd0};
-      debug_trace_wr(data1, data2);                                                   $display("5");
-
+      //if (0) begin  // TODO: update used ring, only when sent/received packets
+      //if (!desc_entry_flg_writ) begin  // pretending to send out packets
+      if (1) begin  // pretending to send/receive packets
+        // write used ring flags+index(), 2B+2B
+        data1 = virt_queue_phy+(0+16*256+1*4096)+0;
+        data2 = {next_avail_idx[virt_queue_sel], 16'd0};
+        debug_trace_wr(data1, data2);                                                   $display("5");
+      end
 
       // update current available index
       curr_avail_idx[virt_queue_sel]  = next_avail_idx[virt_queue_sel];

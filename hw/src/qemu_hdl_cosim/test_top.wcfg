@@ -17,14 +17,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="77450000001fs"></ZoomEndTime>
-      <Cursor1Time time="7472000000fs"></Cursor1Time>
+      <ZoomEndTime time="80136662681fs"></ZoomEndTime>
+      <Cursor1Time time="18366000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="227"></NameColumnWidth>
-      <ValueColumnWidth column_width="70"></ValueColumnWidth>
+      <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="181" />
+   <WVObjectSize size="184" />
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_axi_ctl_aclk">
       <obj_property name="ElementShortName">i_axi_ctl_aclk</obj_property>
       <obj_property name="ObjectShortName">i_axi_ctl_aclk</obj_property>
@@ -737,6 +737,18 @@
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/desc_entry_nxt">
       <obj_property name="ElementShortName">desc_entry_nxt[15:0]</obj_property>
       <obj_property name="ObjectShortName">desc_entry_nxt[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test_top/mst_axifull_toDMA/desc_entry_flg_next">
+      <obj_property name="ElementShortName">desc_entry_flg_next</obj_property>
+      <obj_property name="ObjectShortName">desc_entry_flg_next</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test_top/mst_axifull_toDMA/desc_entry_flg_writ">
+      <obj_property name="ElementShortName">desc_entry_flg_writ</obj_property>
+      <obj_property name="ObjectShortName">desc_entry_flg_writ</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test_top/mst_axifull_toDMA/desc_entry_flg_indi">
+      <obj_property name="ElementShortName">desc_entry_flg_indi</obj_property>
+      <obj_property name="ObjectShortName">desc_entry_flg_indi</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA/desc_chain_len">
       <obj_property name="ElementShortName">desc_chain_len[31:0]</obj_property>
