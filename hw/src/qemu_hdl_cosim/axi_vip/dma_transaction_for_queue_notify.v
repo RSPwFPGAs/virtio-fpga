@@ -116,9 +116,9 @@
       data1 = virt_queue_phy+(0+16*256)+0;
       debug_trace_rd(data1, data2);                                                   $display("1");
       next_avail_idx[virt_queue_sel]  = data2[31:16]; 
-      num_avail_idx = (next_avail_idx[virt_queue_sel] > curr_avail_idx[virt_queue_sel])?
-                      (next_avail_idx[virt_queue_sel] - curr_avail_idx[virt_queue_sel]):
-                (256 + next_avail_idx[virt_queue_sel] - curr_avail_idx[virt_queue_sel]);
+      num_avail_idx = (next_avail_idx[virt_queue_sel] >= curr_avail_idx[virt_queue_sel])?
+                      (next_avail_idx[virt_queue_sel]  - curr_avail_idx[virt_queue_sel]):
+                (256 + next_avail_idx[virt_queue_sel]  - curr_avail_idx[virt_queue_sel]);
       
       for (int i = 0; i < num_avail_idx; i++) begin
         // calculate the ith idx
