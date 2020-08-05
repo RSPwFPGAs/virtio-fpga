@@ -26,9 +26,9 @@
 * siganl, if user wants to create his own ready signal, please refer task user_gen_rready 
 ***************************************************************************************************/
 import axi_vip_pkg::*;
-import shell_region_axi_vip_1_0_pkg::*;
+import shell_region_axi_vip_thread01_0_pkg::*;
 
-module axi_vip_1_passthrough_mst_stimulus();
+module axi_vip_thread01_passthrough_mst_stimulus();
 
    /*************************************************************************************************
   * Declare variables which will be used in API and parital randomization for transaction generation
@@ -68,7 +68,7 @@ module axi_vip_1_passthrough_mst_stimulus();
   * Then click CONFIG under Properties window and Component_Name will be shown
   * More details please refer PG267 for more details
   *************************************************************************************************/
-  shell_region_axi_vip_1_0_passthrough_t              agent;
+  shell_region_axi_vip_thread01_0_passthrough_t              agent;
 
   initial begin
    /***********************************************************************************************
@@ -77,7 +77,7 @@ module axi_vip_1_passthrough_mst_stimulus();
     * "Xilinx AXI VIP Found at Path: my_ip_exdes_tb.DUT.ex_design.axi_vip_mst.inst" will be printed 
     * out. Pass this path to the new function. 
     ***********************************************************************************************/
-    agent = new("passthrough vip agent",DUT.shell_region_i.FIM.FIU.axi_vip_1.inst.IF);
+    agent = new("passthrough vip agent",DUT.shell_region_i.FIM.FIU.axi_vip_thread01.inst.IF);
     
     /***********************************************************************************************   
     * Set tag for agents for easy debug especially multiple agents are called in one testbench
@@ -92,7 +92,7 @@ module axi_vip_1_passthrough_mst_stimulus();
     ***********************************************************************************************/
     agent.set_verbosity(0);
 
-    DUT.shell_region_i.FIM.FIU.axi_vip_1.inst.set_master_mode();  //  Switch passthrough agent 
+    DUT.shell_region_i.FIM.FIU.axi_vip_thread01.inst.set_master_mode();  //  Switch passthrough agent 
                                                                //into run time master mode
     agent.start_master();                                     //agent starts to run
 
@@ -106,7 +106,7 @@ module axi_vip_1_passthrough_mst_stimulus();
 * User defined logic begin
 ***************************/
 
-  `include "dma_transaction.vh"
+  `include "dma_transaction_thread01.vh"
 
 
   task debug_trace_wr(input bit[63:0] addr, input bit[8*4096-1:0] data, input xil_axi_len_t leng=0);
