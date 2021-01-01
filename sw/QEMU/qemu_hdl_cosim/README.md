@@ -184,7 +184,7 @@ The waveform window will show AXI transactions when the application is launched 
 >    sudo ifconfig ens4 down
 
 <a name="testixy"></a>
-## Test with Ping in Guest Machine
+## Test with ixy in Guest Machine
 
 1. In the VM, Test the interface with [ixy](https://github.com/RSPwFPGAs/ixy)
 
