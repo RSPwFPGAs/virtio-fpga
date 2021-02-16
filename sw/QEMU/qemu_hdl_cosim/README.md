@@ -193,7 +193,7 @@ The waveform window will show AXI transactions when the application is launched 
 >    cd ixy
 >    sudo ./setup-hugetlbfs.sh
 >    cd build
->    cmake.
+>    cmake .
 >    make
 >    sudo ./ixy-pktgen  0000:00:04.0
 
