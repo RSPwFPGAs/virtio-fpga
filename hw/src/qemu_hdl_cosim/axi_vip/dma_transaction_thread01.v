@@ -126,7 +126,7 @@
       // { handle multiple descriptor chains
       for (int i = 0; i < num_avail_idx; i++) begin
         // calculate the ith idx
-	ith_avail_idx = curr_avail_idx[virt_queue_sel]+i;// 0~255
+        ith_avail_idx = curr_avail_idx[virt_queue_sel]+i;// 0~255
 
         // TODO: thread 2: read available ring entry, num*2B
         data1 = virt_queue_phy+(0+16*256)+4+ith_avail_idx*2;
@@ -136,37 +136,37 @@
         // read the whole descriptor chain, following the NEXT flag+next
         desc_entry_flg_next = 1'b1; 
         desc_entry_nxt = desc_idx;
-	desc_chain_len = 0;
+        desc_chain_len = 0;
         while (desc_entry_flg_next) begin
           // TODO: thread 3: read descriptor, num*chain_entry*16B
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+0; 
-	  debug_trace_rd(data1, data2);                                              $display("th01: 3.0, %d, %d", i, desc_entry_nxt);
-	  desc_entry[ 31:  0] = data2;
+          debug_trace_rd(data1, data2);                                              $display("th01: 3.0, %d, %d", i, desc_entry_nxt);
+          desc_entry[ 31:  0] = data2;
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+4; 
-	  debug_trace_rd(data1, data2);                                              $display("th01: 3.4, %d, %d", i, desc_entry_nxt);
-	  desc_entry[ 63: 32] = data2;
+          debug_trace_rd(data1, data2);                                              $display("th01: 3.4, %d, %d", i, desc_entry_nxt);
+          desc_entry[ 63: 32] = data2;
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+8; 
-	  debug_trace_rd(data1, data2);                                              $display("th01: 3.8, %d, %d", i, desc_entry_nxt);
-	  desc_entry[ 95: 64] = data2;
+          debug_trace_rd(data1, data2);                                              $display("th01: 3.8, %d, %d", i, desc_entry_nxt);
+          desc_entry[ 95: 64] = data2;
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+12; 
-	  debug_trace_rd(data1, data2);                                              $display("th01: 3.c, %d, %d", i, desc_entry_nxt);
-	  desc_entry[127: 96] = data2;
-	  //2.4.5 The Virtqueue Descriptor Table
-	  desc_entry_phy = desc_entry[ 63:  0];
-	  desc_entry_len = desc_entry[ 95: 64];
+          debug_trace_rd(data1, data2);                                              $display("th01: 3.c, %d, %d", i, desc_entry_nxt);
+          desc_entry[127: 96] = data2;
+          //2.4.5 The Virtqueue Descriptor Table
+          desc_entry_phy = desc_entry[ 63:  0];
+          desc_entry_len = desc_entry[ 95: 64];
           desc_entry_flg = desc_entry[111: 96];
           desc_entry_nxt = desc_entry[127:112];
           
-	  desc_entry_flg_next = desc_entry_flg[0];
-	  desc_entry_flg_writ = desc_entry_flg[1];
-	  desc_entry_flg_indi = desc_entry_flg[2];
+          desc_entry_flg_next = desc_entry_flg[0];
+          desc_entry_flg_writ = desc_entry_flg[1];
+          desc_entry_flg_indi = desc_entry_flg[2];
 
-	  desc_chain_len = desc_chain_len + desc_entry_len;
+          desc_chain_len = desc_chain_len + desc_entry_len;
         end
       
-	// TODO: thread 4: read/write buffer, send/receive packets
-	
-	if (1) begin  // pretending to send/receive packets
+        // TODO: thread 4: read/write buffer, send/receive packets
+    
+        if (1) begin  // pretending to send/receive packets
           // TODO: thread 5: write used ring entry, len+id, num*8B
           data1 = virt_queue_phy+(0+16*256+1*4096)+4+ith_avail_idx*8+0;
           data2 = {16'd0, desc_idx};
