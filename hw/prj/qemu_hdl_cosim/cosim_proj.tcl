@@ -28,6 +28,11 @@ set_property file_type {Verilog Header} [get_files  ../../src/qemu_hdl_cosim/axi
 add_files -fileset sim_1 -norecurse                 ../../src/qemu_hdl_cosim/axi_vip/dma_transaction_thread01.vh
 add_files -fileset sim_1 -norecurse                 ../../src/qemu_hdl_cosim/axi_vip/dma_transaction_thread01.v
 
+add_files -fileset sim_1 -norecurse                 ../../src/qemu_hdl_cosim/axi_vip/axi_vip_thread02_passthrough_mst_stimulus.sv
+set_property file_type {Verilog Header} [get_files  ../../src/qemu_hdl_cosim/axi_vip/axi_vip_thread02_passthrough_mst_stimulus.sv]
+add_files -fileset sim_1 -norecurse                 ../../src/qemu_hdl_cosim/axi_vip/dma_transaction_thread02.vh
+add_files -fileset sim_1 -norecurse                 ../../src/qemu_hdl_cosim/axi_vip/dma_transaction_thread02.v
+
 set_property top_lib xil_defaultlib [get_filesets sim_1]
 
 update_compile_order -fileset sources_1

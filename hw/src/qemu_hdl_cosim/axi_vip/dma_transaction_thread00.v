@@ -80,7 +80,7 @@
   //  end 
   //end
 
-  // TODO: thread 0: handle notification
+  // thread 0: handle notification
   always begin
     @(posedge `CSR_PATH.csr_access_10B2);
     if (`CSR_PATH.csr_drv_ok) begin
@@ -88,6 +88,7 @@
       repeat(2) @(posedge `CSR_PATH.clk);
       virt_queue_num = `CSR_PATH.csr_reg_10B2;
 
+      @(posedge `CSR_PATH.clk);
       queue_notify_set[virt_queue_num] = 1;
       @(posedge `CSR_PATH.clk);
       queue_notify_set[virt_queue_num] = 0;

@@ -60,7 +60,8 @@ shell_region_wrapper DUT (
 `define TH05_PATH test_top.mst_axifull_toDMA_th05
 `define TH06_PATH test_top.mst_axifull_toDMA_th06
 
-reg [2:0] queue_notify_pending;
+// inter-thread-0-1 signal
+reg queue_notify_pending[3];
 // make a record of pending notification
 always @(posedge `CSR_PATH.clk) begin
   for (int i = 0; i < 3; i++) begin
@@ -73,8 +74,32 @@ always @(posedge `CSR_PATH.clk) begin
   end
 end
 
+// inter-thread-1-2 signal
+reg ring_available_pending[3];
+// make a record of pending available rings
+always @(posedge `CSR_PATH.clk) begin
+  for (int i = 0; i < 3; i++) begin
+    if (`CSR_PATH.csr_rst)
+      ring_available_pending[i] = 1'b0;
+    else if (`TH01_PATH.ring_available_set[i])
+      ring_available_pending[i] = 1'b1;
+    else if (`TH02_PATH.ring_available_clr[i])
+      ring_available_pending[i] = 1'b0;
+  end
+end
+
+reg [15:0] next_avail_idx[3];
+// update next available index
+always @(*) begin
+  for (int i = 0; i < 3; i++) begin
+    next_avail_idx[i] = `TH01_PATH.next_avail_idx[i];
+  end
+end
+
+
 // Inter-thread signals
 /////////////////////////////////////
+
 
 always
 begin

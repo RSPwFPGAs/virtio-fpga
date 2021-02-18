@@ -16,15 +16,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="5118000000fs"></ZoomStartTime>
-      <ZoomEndTime time="5161000001fs"></ZoomEndTime>
-      <Cursor1Time time="5154000000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="952000000001fs"></ZoomEndTime>
+      <Cursor1Time time="493518000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="223"></NameColumnWidth>
+      <NameColumnWidth column_width="207"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="217" />
+   <WVObjectSize size="223" />
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_axi_ctl_aclk">
       <obj_property name="ElementShortName">i_axi_ctl_aclk</obj_property>
       <obj_property name="ObjectShortName">i_axi_ctl_aclk</obj_property>
@@ -706,10 +706,6 @@
       <obj_property name="ElementShortName">next_avail_idx[0:2][15:0]</obj_property>
       <obj_property name="ObjectShortName">next_avail_idx[0:2][15:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th01/curr_avail_idx">
-      <obj_property name="ElementShortName">curr_avail_idx[0:2][15:0]</obj_property>
-      <obj_property name="ObjectShortName">curr_avail_idx[0:2][15:0]</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th01/num_avail_idx">
       <obj_property name="ElementShortName">num_avail_idx[15:0]</obj_property>
       <obj_property name="ObjectShortName">num_avail_idx[15:0]</obj_property>
@@ -765,8 +761,8 @@
    <wvobject fp_name="divider189" type="divider">
    </wvobject>
    <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/axi_vip_thread01/m_axi_araddr">
-      <obj_property name="ElementShortName">m_axi_araddr[31:0]</obj_property>
-      <obj_property name="ObjectShortName">m_axi_araddr[31:0]</obj_property>
+      <obj_property name="ElementShortName">m_axi_araddr[63:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_araddr[63:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/axi_vip_thread01/m_axi_arlen">
       <obj_property name="ElementShortName">m_axi_arlen[7:0]</obj_property>
@@ -862,32 +858,58 @@
       <obj_property name="ElementShortName">S06_AXI_rdata[31:0]</obj_property>
       <obj_property name="ObjectShortName">S06_AXI_rdata[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/axi_interconnect_1/S00_AXI_1_RDATA">
-      <obj_property name="ElementShortName">S00_AXI_1_RDATA[31:0]</obj_property>
-      <obj_property name="ObjectShortName">S00_AXI_1_RDATA[31:0]</obj_property>
+   <wvobject fp_name="divider222" type="divider">
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/axi_interconnect_1/S01_AXI_1_RDATA">
-      <obj_property name="ElementShortName">S01_AXI_1_RDATA[31:0]</obj_property>
-      <obj_property name="ObjectShortName">S01_AXI_1_RDATA[31:0]</obj_property>
+   <wvobject fp_name="divider224" type="divider">
+      <obj_property name="label">top</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/axi_interconnect_1/S02_AXI_1_RDATA">
-      <obj_property name="ElementShortName">S02_AXI_1_RDATA[31:0]</obj_property>
-      <obj_property name="ObjectShortName">S02_AXI_1_RDATA[31:0]</obj_property>
+   <wvobject type="array" fp_name="/test_top/queue_notify_pending">
+      <obj_property name="ElementShortName">queue_notify_pending[2:0]</obj_property>
+      <obj_property name="ObjectShortName">queue_notify_pending[2:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/axi_interconnect_1/S03_AXI_1_RDATA">
-      <obj_property name="ElementShortName">S03_AXI_1_RDATA[127:0]</obj_property>
-      <obj_property name="ObjectShortName">S03_AXI_1_RDATA[127:0]</obj_property>
+   <wvobject type="array" fp_name="/test_top/ring_available_pending">
+      <obj_property name="ElementShortName">ring_available_pending[0:2]</obj_property>
+      <obj_property name="ObjectShortName">ring_available_pending[0:2]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/axi_interconnect_1/S04_AXI_1_RDATA">
-      <obj_property name="ElementShortName">S04_AXI_1_RDATA[255:0]</obj_property>
-      <obj_property name="ObjectShortName">S04_AXI_1_RDATA[255:0]</obj_property>
+   <wvobject type="array" fp_name="/test_top/next_avail_idx">
+      <obj_property name="ElementShortName">next_avail_idx[0:2][15:0]</obj_property>
+      <obj_property name="ObjectShortName">next_avail_idx[0:2][15:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/axi_interconnect_1/S05_AXI_1_RDATA">
-      <obj_property name="ElementShortName">S05_AXI_1_RDATA[63:0]</obj_property>
-      <obj_property name="ObjectShortName">S05_AXI_1_RDATA[63:0]</obj_property>
+   <wvobject fp_name="divider225" type="divider">
+      <obj_property name="label">thread00</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/axi_interconnect_1/S06_AXI_1_RDATA">
-      <obj_property name="ElementShortName">S06_AXI_1_RDATA[31:0]</obj_property>
-      <obj_property name="ObjectShortName">S06_AXI_1_RDATA[31:0]</obj_property>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th00/queue_notify_set">
+      <obj_property name="ElementShortName">queue_notify_set[0:2]</obj_property>
+      <obj_property name="ObjectShortName">queue_notify_set[0:2]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider226" type="divider">
+      <obj_property name="label">thread01</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th01/queue_notify_clr">
+      <obj_property name="ElementShortName">queue_notify_clr[0:2]</obj_property>
+      <obj_property name="ObjectShortName">queue_notify_clr[0:2]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th01/ring_available_set">
+      <obj_property name="ElementShortName">ring_available_set[0:2]</obj_property>
+      <obj_property name="ObjectShortName">ring_available_set[0:2]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th01/next_avail_idx">
+      <obj_property name="ElementShortName">next_avail_idx[0:2][15:0]</obj_property>
+      <obj_property name="ObjectShortName">next_avail_idx[0:2][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider227" type="divider">
+      <obj_property name="label">thread02</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/ring_available_clr">
+      <obj_property name="ElementShortName">ring_available_clr[0:2]</obj_property>
+      <obj_property name="ObjectShortName">ring_available_clr[0:2]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/next_avail_idx">
+      <obj_property name="ElementShortName">next_avail_idx[0:2][15:0]</obj_property>
+      <obj_property name="ObjectShortName">next_avail_idx[0:2][15:0]</obj_property>
    </wvobject>
 </wave_config>
