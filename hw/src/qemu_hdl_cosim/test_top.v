@@ -96,6 +96,19 @@ always @(*) begin
   end
 end
 
+// inter-thread-2-6 signal
+reg ring_used_pending[3];
+// make a record of pending used rings
+always @(posedge `CSR_PATH.clk) begin
+  for (int i = 0; i < 3; i++) begin
+    if (`CSR_PATH.csr_rst)
+      ring_used_pending[i] = 1'b0;
+    else if (`TH02_PATH.ring_used_set[i])
+      ring_used_pending[i] = 1'b1;
+    else if (`TH06_PATH.ring_used_clr[i])
+      ring_used_pending[i] = 1'b0;
+  end
+end
 
 // Inter-thread signals
 /////////////////////////////////////

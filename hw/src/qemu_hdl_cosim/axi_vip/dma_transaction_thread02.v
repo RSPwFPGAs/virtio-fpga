@@ -57,6 +57,7 @@
   //reg queue_notify_clr[3];
   //reg ring_available_set[3];
   reg ring_available_clr[3];
+  reg ring_used_set[3];
   //reg [2:0] queue_notify_pending;
 
   // reset
@@ -69,6 +70,7 @@
       //queue_notify_set[i] = 0;
       //queue_notify_clr[i] = 0;
       ring_available_clr[i] = 0;
+      ring_used_set[i] = 0;
     end
   end
 
@@ -101,7 +103,7 @@
 
   // { process notified virtqueue
   // Do we need multiple channels to hanlde multiple virtqueue?
-  // TODO: thread 1: read available ring flags+index(tail), 2B+2B
+  // thread 2: read available ring entry, num*2B
   always begin
     @(posedge `CSR_PATH.clk);
     if (`TOP_PATH.ring_available_pending != 0) begin
@@ -119,30 +121,20 @@
       @(posedge `CSR_PATH.clk);
       ring_available_clr[virt_queue_sel] = 0;
 
-      //// read available ring flags+index(tail), 2B+2B
-      //data1 = virt_queue_phy+(0+16*256)+0;
-      //debug_trace_rd(data1, data2);                                                   $display("th01: 1");
-      //next_avail_idx[virt_queue_sel]  = data2[31:16]; 
+      // calculate number of available index in available ring
       next_avail_idx[virt_queue_sel] = `TOP_PATH.next_avail_idx[virt_queue_sel]; 
       num_avail_idx = (next_avail_idx[virt_queue_sel] >= curr_avail_idx[virt_queue_sel])?
                       (next_avail_idx[virt_queue_sel]  - curr_avail_idx[virt_queue_sel]):
                 (256 + next_avail_idx[virt_queue_sel]  - curr_avail_idx[virt_queue_sel]);
-
-    //  // set pending notification
-    //  ring_available_set[virt_queue_sel] = 1;
-    //  @(posedge `CSR_PATH.clk);
-    //  ring_available_set[virt_queue_sel] = 0;
-
-    //end
 
       // { handle multiple descriptor chains
       for (int i = 0; i < num_avail_idx; i++) begin
         // calculate the ith idx
         ith_avail_idx = curr_avail_idx[virt_queue_sel]+i;// 0~255
 
-        // TODO: thread 2: read available ring entry, num*2B
+        // read available ring entry, num*2B
         data1 = virt_queue_phy+(0+16*256)+4+ith_avail_idx*2;
-        debug_trace_rd(data1, data2);                                                 $display("th01: 2, %d", i);
+        debug_trace_rd(data1, data2);                                                 $display("th02: 2, %d", i);
         desc_idx = data1[1]? data2[31:16]: data2[15:0];
       
         // read the whole descriptor chain, following the NEXT flag+next
@@ -152,22 +144,22 @@
         while (desc_entry_flg_next) begin
           // TODO: thread 3: read descriptor, num*chain_entry*16B
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+0; 
-          debug_trace_rd(data1, data2);                                              $display("th01: 3.0, %d, %d", i, desc_entry_nxt);
+          debug_trace_rd(data1, data2);                                              $display("th02: 3.0, %d, %d", i, desc_entry_nxt);
           desc_entry[ 31:  0] = data2;
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+4; 
-          debug_trace_rd(data1, data2);                                              $display("th01: 3.4, %d, %d", i, desc_entry_nxt);
+          debug_trace_rd(data1, data2);                                              $display("th02: 3.4, %d, %d", i, desc_entry_nxt);
           desc_entry[ 63: 32] = data2;
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+8; 
-          debug_trace_rd(data1, data2);                                              $display("th01: 3.8, %d, %d", i, desc_entry_nxt);
+          debug_trace_rd(data1, data2);                                              $display("th02: 3.8, %d, %d", i, desc_entry_nxt);
           desc_entry[ 95: 64] = data2;
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+12; 
-          debug_trace_rd(data1, data2);                                              $display("th01: 3.c, %d, %d", i, desc_entry_nxt);
+          debug_trace_rd(data1, data2);                                              $display("th02: 3.c, %d, %d", i, desc_entry_nxt);
           desc_entry[127: 96] = data2;
           //2.4.5 The Virtqueue Descriptor Table
-          desc_entry_phy = desc_entry[ 63:  0];
-          desc_entry_len = desc_entry[ 95: 64];
-          desc_entry_flg = desc_entry[111: 96];
-          desc_entry_nxt = desc_entry[127:112];
+          desc_entry_phy = desc_entry[ 63:  0];  // 64b
+          desc_entry_len = desc_entry[ 95: 64];  // 32b
+          desc_entry_flg = desc_entry[111: 96];  // 16b
+          desc_entry_nxt = desc_entry[127:112];  // 16b
           
           desc_entry_flg_next = desc_entry_flg[0];
           desc_entry_flg_writ = desc_entry_flg[1];
@@ -182,25 +174,31 @@
           // TODO: thread 5: write used ring entry, len+id, num*8B
           data1 = virt_queue_phy+(0+16*256+1*4096)+4+ith_avail_idx*8+0;
           data2 = {16'd0, desc_idx};
-          debug_trace_wr(data1, data2);                                                 $display("th01: 5.0, %d", i);
+          debug_trace_wr(data1, data2);                                                 $display("th02: 5.0, %d", i);
           data1 = virt_queue_phy+(0+16*256+1*4096)+4+ith_avail_idx*8+4;
           data2 = desc_entry_flg_writ? desc_chain_len: 0;//5.1.6.1
-          debug_trace_wr(data1, data2);                                                 $display("th01: 5.4, %d", i);
+          debug_trace_wr(data1, data2);                                                 $display("th02: 5.4, %d", i);
         end
       end
       // } handle multiple descriptor chains
       
       // update current available index
       curr_avail_idx[virt_queue_sel]  = next_avail_idx[virt_queue_sel]; 
-      
-      // { update used ring header
-      if (1) begin  // pretending to send/receive packets
-        // TODO: thread 6: write used ring flags+index(), 2B+2B
-        data1 = virt_queue_phy+(0+16*256+1*4096)+0;
-        data2 = {next_avail_idx[virt_queue_sel], 16'd0};
-        debug_trace_wr(data1, data2);                                                   $display("th01: 6");
-      end
-      // } update used ring header
+ 
+      // set pending notification
+      @(posedge `CSR_PATH.clk);
+      ring_used_set[virt_queue_sel] = 1;
+      @(posedge `CSR_PATH.clk);
+      ring_used_set[virt_queue_sel] = 0;
+
+      //// { update used ring header
+      //if (1) begin  // pretending to send/receive packets
+      //  // TODO: thread 6: write used ring flags+index(), 2B+2B
+      //  data1 = virt_queue_phy+(0+16*256+1*4096)+0;
+      //  data2 = {next_avail_idx[virt_queue_sel], 16'd0};
+      //  debug_trace_wr(data1, data2);                                                   $display("th02: 6");
+      //end
+      //// } update used ring header
 
     end
 

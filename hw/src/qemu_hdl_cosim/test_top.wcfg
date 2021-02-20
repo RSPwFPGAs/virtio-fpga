@@ -17,14 +17,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="952000000001fs"></ZoomEndTime>
-      <Cursor1Time time="493518000000fs"></Cursor1Time>
+      <ZoomEndTime time="442000000001fs"></ZoomEndTime>
+      <Cursor1Time time="241814000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="207"></NameColumnWidth>
+      <NameColumnWidth column_width="203"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="223" />
+   <WVObjectSize size="227" />
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_axi_ctl_aclk">
       <obj_property name="ElementShortName">i_axi_ctl_aclk</obj_property>
       <obj_property name="ObjectShortName">i_axi_ctl_aclk</obj_property>
@@ -687,8 +687,8 @@
       <obj_property name="ObjectShortName">queue_notify_clr[0:2]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/queue_notify_pending">
-      <obj_property name="ElementShortName">queue_notify_pending[2:0]</obj_property>
-      <obj_property name="ObjectShortName">queue_notify_pending[2:0]</obj_property>
+      <obj_property name="ElementShortName">queue_notify_pending[0:2]</obj_property>
+      <obj_property name="ObjectShortName">queue_notify_pending[0:2]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th01/virt_queue_num">
       <obj_property name="ElementShortName">virt_queue_num[15:0]</obj_property>
@@ -865,8 +865,8 @@
       <obj_property name="DisplayName">label</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/queue_notify_pending">
-      <obj_property name="ElementShortName">queue_notify_pending[2:0]</obj_property>
-      <obj_property name="ObjectShortName">queue_notify_pending[2:0]</obj_property>
+      <obj_property name="ElementShortName">queue_notify_pending[0:2]</obj_property>
+      <obj_property name="ObjectShortName">queue_notify_pending[0:2]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/ring_available_pending">
       <obj_property name="ElementShortName">ring_available_pending[0:2]</obj_property>
@@ -875,6 +875,10 @@
    <wvobject type="array" fp_name="/test_top/next_avail_idx">
       <obj_property name="ElementShortName">next_avail_idx[0:2][15:0]</obj_property>
       <obj_property name="ObjectShortName">next_avail_idx[0:2][15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/ring_used_pending">
+      <obj_property name="ElementShortName">ring_used_pending[0:2]</obj_property>
+      <obj_property name="ObjectShortName">ring_used_pending[0:2]</obj_property>
    </wvobject>
    <wvobject fp_name="divider225" type="divider">
       <obj_property name="label">thread00</obj_property>
@@ -911,5 +915,17 @@
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/next_avail_idx">
       <obj_property name="ElementShortName">next_avail_idx[0:2][15:0]</obj_property>
       <obj_property name="ObjectShortName">next_avail_idx[0:2][15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/ring_used_set">
+      <obj_property name="ElementShortName">ring_used_set[0:2]</obj_property>
+      <obj_property name="ObjectShortName">ring_used_set[0:2]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider228" type="divider">
+      <obj_property name="label">thread06</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th06/ring_used_clr">
+      <obj_property name="ElementShortName">ring_used_clr[0:2]</obj_property>
+      <obj_property name="ObjectShortName">ring_used_clr[0:2]</obj_property>
    </wvobject>
 </wave_config>

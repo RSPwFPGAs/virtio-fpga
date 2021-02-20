@@ -100,7 +100,7 @@
 
   // { process notified virtqueue
   // Do we need multiple channels to hanlde multiple virtqueue?
-  // TODO: thread 1: read available ring flags+index(tail), 2B+2B
+  // thread 1: read available ring flags+index(tail), 2B+2B
   always begin
     @(posedge `CSR_PATH.clk);
     if (`TOP_PATH.queue_notify_pending != 0) begin
