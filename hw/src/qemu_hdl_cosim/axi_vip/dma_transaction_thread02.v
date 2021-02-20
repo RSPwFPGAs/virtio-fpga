@@ -122,7 +122,7 @@
       ring_available_clr[virt_queue_sel] = 0;
 
       // calculate number of available index in available ring
-      next_avail_idx[virt_queue_sel] = `TOP_PATH.next_avail_idx[virt_queue_sel]; 
+      next_avail_idx[virt_queue_sel] = `TOP_PATH.th01_next_avail_idx[virt_queue_sel]; 
       num_avail_idx = (next_avail_idx[virt_queue_sel] >= curr_avail_idx[virt_queue_sel])?
                       (next_avail_idx[virt_queue_sel]  - curr_avail_idx[virt_queue_sel]):
                 (256 + next_avail_idx[virt_queue_sel]  - curr_avail_idx[virt_queue_sel]);

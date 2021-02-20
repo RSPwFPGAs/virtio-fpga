@@ -88,11 +88,11 @@ always @(posedge `CSR_PATH.clk) begin
   end
 end
 
-reg [15:0] next_avail_idx[3];
+reg [15:0] th01_next_avail_idx[3];
 // update next available index
 always @(*) begin
   for (int i = 0; i < 3; i++) begin
-    next_avail_idx[i] = `TH01_PATH.next_avail_idx[i];
+    th01_next_avail_idx[i] = `TH01_PATH.next_avail_idx[i];
   end
 end
 
@@ -107,6 +107,14 @@ always @(posedge `CSR_PATH.clk) begin
       ring_used_pending[i] = 1'b1;
     else if (`TH06_PATH.ring_used_clr[i])
       ring_used_pending[i] = 1'b0;
+  end
+end
+
+reg [15:0] th02_next_avail_idx[3];
+// update next available index
+always @(*) begin
+  for (int i = 0; i < 3; i++) begin
+    th02_next_avail_idx[i] = `TH02_PATH.next_avail_idx[i];
   end
 end
 
