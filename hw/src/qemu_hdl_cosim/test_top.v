@@ -60,7 +60,7 @@ shell_region_wrapper DUT (
 `define TH05_PATH test_top.mst_axifull_toDMA_th05
 `define TH06_PATH test_top.mst_axifull_toDMA_th06
 
-// inter-thread-0-1 signal
+// inter-thread 0-1 signals
 reg queue_notify_pending[3];
 // make a record of pending notification
 always @(posedge `CSR_PATH.clk) begin
@@ -74,7 +74,7 @@ always @(posedge `CSR_PATH.clk) begin
   end
 end
 
-// inter-thread-1-2 signal
+// inter-thread 1-2 signals
 reg ring_available_pending[3];
 // make a record of pending available rings
 always @(posedge `CSR_PATH.clk) begin
@@ -96,32 +96,37 @@ always @(*) begin
   end
 end
 
-// inter-thread-2-4 signal
-bit [127:0] desc_queue_0 [$] = {};
-bit [127:0] desc_queue_1 [$] = {};
-bit [127:0] desc_queue_2 [$] = {};
+// inter-thread 2-345 signals
+bit [16+128-1:0] desc_queue_0 [$] = {};  // {desc_idx, desc_entry}
+bit [16+128-1:0] desc_queue_1 [$] = {};
+bit [16+128-1:0] desc_queue_2 [$] = {};
 
-// inter-thread-2-6 signal
-reg ring_used_pending[3];
-// make a record of pending used rings
-always @(posedge `CSR_PATH.clk) begin
-  for (int i = 0; i < 3; i++) begin
-    if (`CSR_PATH.csr_rst)
-      ring_used_pending[i] = 1'b0;
-    else if (`TH02_PATH.ring_used_set[i])
-      ring_used_pending[i] = 1'b1;
-    else if (`TH06_PATH.ring_used_clr[i])
-      ring_used_pending[i] = 1'b0;
-  end
-end
+// inter-thread 345-6 signals
+bit [16+32-1:0] ring_used_queue_0 [$] = {};  // {desc_idx, desc_chain_len}
+bit [16+32-1:0] ring_used_queue_1 [$] = {};
+bit [16+32-1:0] ring_used_queue_2 [$] = {};
 
-reg [15:0] th02_next_avail_idx[3];
-// update next available index
-always @(*) begin
-  for (int i = 0; i < 3; i++) begin
-    th02_next_avail_idx[i] = `TH02_PATH.next_avail_idx[i];
-  end
-end
+//// inter-thread 2-6 signals
+//reg ring_used_pending[3];
+//// make a record of pending used rings
+//always @(posedge `CSR_PATH.clk) begin
+//  for (int i = 0; i < 3; i++) begin
+//    if (`CSR_PATH.csr_rst)
+//      ring_used_pending[i] = 1'b0;
+//    else if (`TH02_PATH.ring_used_set[i])
+//      ring_used_pending[i] = 1'b1;
+//    else if (`TH06_PATH.ring_used_clr[i])
+//      ring_used_pending[i] = 1'b0;
+//  end
+//end
+//
+//reg [15:0] th02_next_avail_idx[3];
+//// update next available index
+//always @(*) begin
+//  for (int i = 0; i < 3; i++) begin
+//    th02_next_avail_idx[i] = `TH02_PATH.next_avail_idx[i];
+//  end
+//end
 
 // Inter-thread signals
 /////////////////////////////////////

@@ -53,48 +53,48 @@
   reg [15:0] desc_entry_nxt = 0;
   reg [31:0] desc_chain_len= 0;
 
-  reg queue_notify_set[3];
-  reg queue_notify_clr[3];
-  reg [2:0] queue_notify_pending;
+  //reg queue_notify_set[3];
+  //reg queue_notify_clr[3];
+  //reg [2:0] queue_notify_pending;
 
-  // reset
-  always begin
-    @(posedge `CSR_PATH.csr_rst);
-    for (int i = 0; i < 3; i++) begin
-      curr_avail_idx[i] = 0;
-      next_avail_idx[i] = 0;
-      
-      queue_notify_set[i] = 0;
-      queue_notify_clr[i] = 0;
-    end
-  end
+  //// reset
+  //always begin
+  //  @(posedge `CSR_PATH.csr_rst);
+  //  for (int i = 0; i < 3; i++) begin
+  //    curr_avail_idx[i] = 0;
+  //    next_avail_idx[i] = 0;
+  //    
+  //    queue_notify_set[i] = 0;
+  //    queue_notify_clr[i] = 0;
+  //  end
+  //end
 
-  // make a record of pending notification
-  always @(posedge `CSR_PATH.clk) begin
-    for (int i = 0; i < 3; i++) begin
-      if (queue_notify_set[i])
-        queue_notify_pending[i] = 1'b1;
-      else if (queue_notify_clr[i])
-        queue_notify_pending[i] = 1'b0;
-      else if (`CSR_PATH.csr_rst)
-        queue_notify_pending[i] = 1'b0;
-    end 
-  end
+  //// make a record of pending notification
+  //always @(posedge `CSR_PATH.clk) begin
+  //  for (int i = 0; i < 3; i++) begin
+  //    if (queue_notify_set[i])
+  //      queue_notify_pending[i] = 1'b1;
+  //    else if (queue_notify_clr[i])
+  //      queue_notify_pending[i] = 1'b0;
+  //    else if (`CSR_PATH.csr_rst)
+  //      queue_notify_pending[i] = 1'b0;
+  //  end 
+  //end
 
-  // TODO: thread 0: handle notification
-  always begin
-    @(posedge `CSR_PATH.csr_access_10B2);
-    if (`CSR_PATH.csr_drv_ok) begin
+  //// TODO: thread 0: handle notification
+  //always begin
+  //  @(posedge `CSR_PATH.csr_access_10B2);
+  //  if (`CSR_PATH.csr_drv_ok) begin
 
-      repeat(2) @(posedge `CSR_PATH.clk);
-      virt_queue_num = `CSR_PATH.csr_reg_10B2;
+  //    repeat(2) @(posedge `CSR_PATH.clk);
+  //    virt_queue_num = `CSR_PATH.csr_reg_10B2;
 
-      queue_notify_set[virt_queue_num] = 1;
-      @(posedge `CSR_PATH.clk);
-      queue_notify_set[virt_queue_num] = 0;
+  //    queue_notify_set[virt_queue_num] = 1;
+  //    @(posedge `CSR_PATH.clk);
+  //    queue_notify_set[virt_queue_num] = 0;
 
-    end  
-  end
+  //  end  
+  //end
 
   // { process notified virtqueue
   // Do we need multiple channels to hanlde multiple virtqueue?
@@ -165,9 +165,34 @@
     //    end
     //  
         // thread 3: handle receiveq
-        if (`TOP_PATH.desc_queue_0.size() > 0)
-          desc_entry = `TOP_PATH.desc_queue_0.pop_front();
-    
+	if (`TOP_PATH.desc_queue_0.size() > 0) begin
+          // read the whole descriptor chain, following the NEXT flag+next
+          desc_entry_flg_next = 1'b1;
+          desc_chain_len = 0;
+          while (desc_entry_flg_next) begin
+            // read from the input queue
+            {desc_idx, desc_entry} = `TOP_PATH.desc_queue_0.pop_front();
+  
+            //2.4.5 The Virtqueue Descriptor Table
+            desc_entry_phy = desc_entry[ 63:  0];  // 64b
+            desc_entry_len = desc_entry[ 95: 64];  // 32b
+            desc_entry_flg = desc_entry[111: 96];  // 16b
+            desc_entry_nxt = desc_entry[127:112];  // 16b
+  
+            desc_entry_flg_next = desc_entry_flg[0];
+            desc_entry_flg_writ = desc_entry_flg[1];
+            desc_entry_flg_indi = desc_entry_flg[2];
+  
+            desc_chain_len = desc_chain_len + desc_entry_len;
+  
+            $display("th03 desc: %d, %d, %d, %d, %d", desc_entry_len, desc_entry_flg_next, desc_entry_flg_writ, desc_entry_flg_indi, `TOP_PATH.desc_queue_0.size());  
+          end
+
+          // write to the output queue
+          desc_chain_len = desc_entry_flg_writ? desc_chain_len: 0;//5.1.6.1 
+          `TOP_PATH.ring_used_queue_0.push_back({desc_idx, desc_chain_len});
+        end
+
     //    
     //    if (1) begin  // pretending to send/receive packets
     //      // TODO: thread 5: write used ring entry, len+id, num*8B
