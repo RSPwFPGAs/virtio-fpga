@@ -142,7 +142,7 @@
         desc_entry_nxt = desc_idx;
         desc_chain_len = 0;
         while (desc_entry_flg_next) begin
-          // TODO: thread 3: read descriptor, num*chain_entry*16B
+          // read descriptor, num*chain_entry*16B
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+0; 
           debug_trace_rd(data1, data2);                                              $display("th02: 3.0, %d, %d", i, desc_entry_nxt);
           desc_entry[ 31:  0] = data2;
@@ -166,12 +166,20 @@
           desc_entry_flg_indi = desc_entry_flg[2];
 
           desc_chain_len = desc_chain_len + desc_entry_len;
-        end
+
+          // push descriptor to FIFO
+          if (virt_queue_sel == 0)  
+	    `TOP_PATH.desc_queue_0.push_back(desc_entry);
+          if (virt_queue_sel == 1)  
+	    `TOP_PATH.desc_queue_1.push_back(desc_entry);
+          if (virt_queue_sel == 2)  
+	    `TOP_PATH.desc_queue_2.push_back(desc_entry);
+	end
       
-        // TODO: thread 4: read/write buffer, send/receive packets
+        // TODO: thread 3 4 5: handle receiveq, transmitq and controlq
     
         if (1) begin  // pretending to send/receive packets
-          // TODO: thread 5: write used ring entry, len+id, num*8B
+          // TODO: thread 6: write used ring entry, len+id, num*8B
           data1 = virt_queue_phy+(0+16*256+1*4096)+4+ith_avail_idx*8+0;
           data2 = {16'd0, desc_idx};
           debug_trace_wr(data1, data2);                                                 $display("th02: 5.0, %d", i);

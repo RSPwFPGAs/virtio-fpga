@@ -96,6 +96,11 @@ always @(*) begin
   end
 end
 
+// inter-thread-2-4 signal
+bit [127:0] desc_queue_0 [$] = {};
+bit [127:0] desc_queue_1 [$] = {};
+bit [127:0] desc_queue_2 [$] = {};
+
 // inter-thread-2-6 signal
 reg ring_used_pending[3];
 // make a record of pending used rings
