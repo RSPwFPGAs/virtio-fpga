@@ -165,13 +165,13 @@
     //    end
     //  
         // thread 3: handle receiveq
-	if (`TOP_PATH.desc_queue_0.size() > 0) begin
+	if (`TOP_PATH.desc_queue[0].size() > 0) begin
           // read the whole descriptor chain, following the NEXT flag+next
           desc_entry_flg_next = 1'b1;
           desc_chain_len = 0;
           while (desc_entry_flg_next) begin
             // read from the input queue
-            {desc_idx, desc_entry} = `TOP_PATH.desc_queue_0.pop_front();
+            {desc_idx, desc_entry} = `TOP_PATH.desc_queue[0].pop_front();
   
             //2.4.5 The Virtqueue Descriptor Table
             desc_entry_phy = desc_entry[ 63:  0];  // 64b
@@ -185,12 +185,12 @@
   
             desc_chain_len = desc_chain_len + desc_entry_len;
   
-            $display("th03 desc: %d, %d, %d, %d, %d", desc_entry_len, desc_entry_flg_next, desc_entry_flg_writ, desc_entry_flg_indi, `TOP_PATH.desc_queue_0.size());  
+            $display("th03 desc: %d, %d, %d, %d, %d", desc_entry_len, desc_entry_flg_next, desc_entry_flg_writ, desc_entry_flg_indi, `TOP_PATH.desc_queue[0].size());  
           end
 
           // write to the output queue
           desc_chain_len = desc_entry_flg_writ? desc_chain_len: 0;//5.1.6.1 
-          `TOP_PATH.ring_used_queue_0.push_back({desc_idx, desc_chain_len});
+          `TOP_PATH.ring_used_queue[0].push_back({desc_idx, desc_chain_len});
         end
 
     //    

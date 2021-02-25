@@ -54,7 +54,6 @@
   reg [31:0] desc_chain_len= 0;
 
   reg [31:0] ring_used_queue_size[3];
-  reg [31:0] queue_size;
 
   // reset
   always begin
@@ -99,11 +98,11 @@
   always begin
     @(posedge `CSR_PATH.clk);
     // read size only once
-    ring_used_queue_size[0] = `TOP_PATH.ring_used_queue_0.size(); 
-    ring_used_queue_size[1] = `TOP_PATH.ring_used_queue_1.size(); 
-    ring_used_queue_size[2] = `TOP_PATH.ring_used_queue_2.size(); 
+    for (int i = 0; i < 3; i++) begin
+      ring_used_queue_size[i] = `TOP_PATH.ring_used_queue[i].size();
+    end
     if ((ring_used_queue_size[0] > 0) || (ring_used_queue_size[1] > 0) || (ring_used_queue_size[2] > 0)) begin
-      // arbiter to choose which pending available ring to process
+      // arbiter to choose which unempty used ring to process
       virt_queue_sel = (ring_used_queue_size[0] > 0)? 0:
                       ((ring_used_queue_size[1] > 0)? 1:
                       ((ring_used_queue_size[2] > 0)? 2:
@@ -160,36 +159,31 @@
       //
       //  // TODO: thread 4: read/write buffer, send/receive packets
     
-      if (virt_queue_sel == 0) queue_size = ring_used_queue_size[0];
-      if (virt_queue_sel == 1) queue_size = ring_used_queue_size[1];
-      if (virt_queue_sel == 2) queue_size = ring_used_queue_size[2];
-      for (int i = 0; i < queue_size; i++) begin
+      for (int i = 0; i < ring_used_queue_size[virt_queue_sel]; i++) begin
         // read queue
-        if (virt_queue_sel == 0) {desc_idx, desc_chain_len} = `TOP_PATH.ring_used_queue_0.pop_front();
-        if (virt_queue_sel == 1) {desc_idx, desc_chain_len} = `TOP_PATH.ring_used_queue_1.pop_front();
-        if (virt_queue_sel == 2) {desc_idx, desc_chain_len} = `TOP_PATH.ring_used_queue_2.pop_front();
+        {desc_idx, desc_chain_len} = `TOP_PATH.ring_used_queue[virt_queue_sel].pop_front();
 
         ith_avail_idx = curr_avail_idx[virt_queue_sel] + i;// 0~255
 
         // thread 6: write used ring entry, id+len, num*8B
         data1 = virt_queue_phy+(0+16*256+1*4096)+4+ith_avail_idx*8+0;
         data2 = {16'd0, desc_idx};
-        debug_trace_wr(data1, data2);                                                 $display("th06: 5.0, %d", i);
+        debug_trace_wr(data1, data2);                                                 $display("th06: 5.0 dma_wr, %d", i);
         data1 = virt_queue_phy+(0+16*256+1*4096)+4+ith_avail_idx*8+4;
         data2 = desc_chain_len;
-        debug_trace_wr(data1, data2);                                                 $display("th06: 5.4, %d", i);
+        debug_trace_wr(data1, data2);                                                 $display("th06: 5.4 dma_wr, %d", i);
       end
      
       // update current available index
+      //curr_avail_idx[virt_queue_sel] = curr_avail_idx[virt_queue_sel] + ring_used_queue_size[virt_queue_sel];
+      ith_avail_idx = ith_avail_idx + 1;
       curr_avail_idx[virt_queue_sel] = ith_avail_idx;
 
       // { update used ring header
-      if (1) begin  // pretending to send/receive packets
-        // thread 6: write used ring flags+index(), 2B+2B
-        data1 = virt_queue_phy+(0+16*256+1*4096)+0;
-        data2 = {curr_avail_idx[virt_queue_sel], 16'd0};
-        debug_trace_wr(data1, data2);                                                   $display("th06: 6");
-      end
+      // thread 6: write used ring flags+index(), 2B+2B
+      data1 = virt_queue_phy+(0+16*256+1*4096)+0;
+      data2 = {curr_avail_idx[virt_queue_sel], 16'd0};
+      debug_trace_wr(data1, data2);                                                   $display("th06: 6.0 dma_wr");
       // } update used ring header
 
     end

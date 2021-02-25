@@ -96,15 +96,20 @@ always @(*) begin
   end
 end
 
+//typedef bit [16+128-1:0] desc_q [];
+//desc_q desc_queue [$];
+
 // inter-thread 2-345 signals
-bit [16+128-1:0] desc_queue_0 [$] = {};  // {desc_idx, desc_entry}
-bit [16+128-1:0] desc_queue_1 [$] = {};
-bit [16+128-1:0] desc_queue_2 [$] = {};
+//bit [16+128-1:0] desc_queue_0 [$] = {};
+//bit [16+128-1:0] desc_queue_1 [$] = {};
+//bit [16+128-1:0] desc_queue_2 [$] = {};
+bit [16+128-1:0] desc_queue[3] [$];  // {desc_idx, desc_entry}
 
 // inter-thread 345-6 signals
-bit [16+32-1:0] ring_used_queue_0 [$] = {};  // {desc_idx, desc_chain_len}
-bit [16+32-1:0] ring_used_queue_1 [$] = {};
-bit [16+32-1:0] ring_used_queue_2 [$] = {};
+//bit [16+32-1:0] ring_used_queue_0 [$] = {};
+//bit [16+32-1:0] ring_used_queue_1 [$] = {};
+//bit [16+32-1:0] ring_used_queue_2 [$] = {};
+bit [16+32-1:0] ring_used_queue[3] [$];  // {desc_idx, desc_chain_len}
 
 //// inter-thread 2-6 signals
 //reg ring_used_pending[3];

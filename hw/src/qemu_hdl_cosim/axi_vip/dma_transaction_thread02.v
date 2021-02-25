@@ -132,7 +132,7 @@
 
         // read available ring entry, num*2B
         data1 = virt_queue_phy+(0+16*256)+4+ith_avail_idx*2;
-        debug_trace_rd(data1, data2);                                                 $display("th02: 2.0, %d", i);
+        debug_trace_rd(data1, data2);                                                 $display("th02: 2.0 dma_rd, %d", i);
         desc_idx = data1[1]? data2[31:16]: data2[15:0];
       
         // read the whole descriptor chain, following the NEXT flag+next
@@ -142,16 +142,16 @@
         while (desc_entry_flg_next) begin
           // read descriptor, num*chain_entry*16B
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+0; 
-          debug_trace_rd(data1, data2);                                              $display("th02: 3.0, %d, %d", i, desc_entry_nxt);
+          debug_trace_rd(data1, data2);                                              $display("th02: 3.0 dma_rd, %d, %d", i, desc_entry_nxt);
           desc_entry[ 31:  0] = data2;
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+4; 
-          debug_trace_rd(data1, data2);                                              $display("th02: 3.4, %d, %d", i, desc_entry_nxt);
+          debug_trace_rd(data1, data2);                                              $display("th02: 3.4 dma_rd, %d, %d", i, desc_entry_nxt);
           desc_entry[ 63: 32] = data2;
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+8; 
-          debug_trace_rd(data1, data2);                                              $display("th02: 3.8, %d, %d", i, desc_entry_nxt);
+          debug_trace_rd(data1, data2);                                              $display("th02: 3.8 dma_rd, %d, %d", i, desc_entry_nxt);
           desc_entry[ 95: 64] = data2;
           data1 = virt_queue_phy+(0)+desc_entry_nxt*16+12; 
-          debug_trace_rd(data1, data2);                                              $display("th02: 3.c, %d, %d", i, desc_entry_nxt);
+          debug_trace_rd(data1, data2);                                              $display("th02: 3.c dma_rd, %d, %d", i, desc_entry_nxt);
           desc_entry[127: 96] = data2;
           //2.4.5 The Virtqueue Descriptor Table
           desc_entry_phy = desc_entry[ 63:  0];  // 64b
@@ -168,12 +168,13 @@
           desc_chain_len = desc_chain_len + desc_entry_len;
 
           // push descriptor to FIFO
-          if (virt_queue_sel == 0)  
-	    `TOP_PATH.desc_queue_0.push_back({desc_idx, desc_entry});
-          if (virt_queue_sel == 1)  
-	    `TOP_PATH.desc_queue_1.push_back({desc_idx, desc_entry});
-          if (virt_queue_sel == 2)  
-	    `TOP_PATH.desc_queue_2.push_back({desc_idx, desc_entry});
+          //if (virt_queue_sel == 0)  
+	  //  `TOP_PATH.desc_queue_0.push_back({desc_idx, desc_entry});
+          //if (virt_queue_sel == 1)  
+	  //  `TOP_PATH.desc_queue_1.push_back({desc_idx, desc_entry});
+          //if (virt_queue_sel == 2)  
+	  //  `TOP_PATH.desc_queue_2.push_back({desc_idx, desc_entry});
+	  `TOP_PATH.desc_queue[virt_queue_sel].push_back({desc_idx, desc_entry});
 	end
       
         // TODO: thread 3 4 5: handle receiveq, transmitq and controlq
