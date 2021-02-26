@@ -170,7 +170,7 @@
           desc_entry_flg_next = 1'b1;
           desc_chain_len = 0;
           while (desc_entry_flg_next) begin
-            // read from the input queue
+            // read from the descriptor queue
             {desc_idx, desc_entry} = `TOP_PATH.desc_queue[1].pop_front();
  
             //2.4.5 The Virtqueue Descriptor Table
@@ -188,7 +188,17 @@
             $display("th04 desc: %d, %d, %d, %d, %d", desc_entry_len, desc_entry_flg_next, desc_entry_flg_writ, desc_entry_flg_indi, `TOP_PATH.desc_queue[1].size());
           end
 
-          // write to the output queue
+	  // read from host mem@desc_entry_phy and write to the loopback queue
+          @(posedge `CSR_PATH.clk);
+	  `TOP_PATH.loopback_queue.push_back({2'b01, 8'haa});
+          @(posedge `CSR_PATH.clk);
+	  `TOP_PATH.loopback_queue.push_back({2'b11, 8'hbb});
+          @(posedge `CSR_PATH.clk);
+	  `TOP_PATH.loopback_queue.push_back({2'b11, 8'hcc});
+          @(posedge `CSR_PATH.clk);
+	  `TOP_PATH.loopback_queue.push_back({2'b10, 8'hdd});
+
+          // write to the used ring queue
           desc_chain_len = desc_entry_flg_writ? desc_chain_len: 0;//5.1.6.1
           `TOP_PATH.ring_used_queue[1].push_back({desc_idx, desc_chain_len});
         end

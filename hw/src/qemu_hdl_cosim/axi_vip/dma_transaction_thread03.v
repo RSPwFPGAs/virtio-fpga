@@ -53,6 +53,10 @@
   reg [15:0] desc_entry_nxt = 0;
   reg [31:0] desc_chain_len= 0;
 
+  reg [2+8-1:0] packet_entry;
+  reg [2  -1:0] packet_ctrl;
+  reg [  8-1:0] packet_data;
+
   //reg queue_notify_set[3];
   //reg queue_notify_clr[3];
   //reg [2:0] queue_notify_pending;
@@ -170,7 +174,7 @@
           desc_entry_flg_next = 1'b1;
           desc_chain_len = 0;
           while (desc_entry_flg_next) begin
-            // read from the input queue
+            // read from the descriptor queue
             {desc_idx, desc_entry} = `TOP_PATH.desc_queue[0].pop_front();
   
             //2.4.5 The Virtqueue Descriptor Table
@@ -188,7 +192,23 @@
             $display("th03 desc: %d, %d, %d, %d, %d", desc_entry_len, desc_entry_flg_next, desc_entry_flg_writ, desc_entry_flg_indi, `TOP_PATH.desc_queue[0].size());  
           end
 
-          // write to the output queue
+          // wait for Rx packet
+          while (`TOP_PATH.loopback_queue.size() == 0) begin 
+            @(posedge `CSR_PATH.clk);
+          end
+
+          // read from loopback queue and write to host mem@desc_entry_phy
+          packet_ctrl = 2'b00;
+          packet_data = 8'h00;
+          while (packet_ctrl != 2'b10 && `TOP_PATH.loopback_queue.size() != 0) begin
+            @(posedge `CSR_PATH.clk);
+            packet_entry = `TOP_PATH.loopback_queue.pop_front();
+	   
+            packet_ctrl = packet_entry[9:8];
+            packet_data = packet_entry[7:0];
+          end
+
+          // write to the used ring queue
           desc_chain_len = desc_entry_flg_writ? desc_chain_len: 0;//5.1.6.1 
           `TOP_PATH.ring_used_queue[0].push_back({desc_idx, desc_chain_len});
         end

@@ -96,42 +96,14 @@ always @(*) begin
   end
 end
 
-//typedef bit [16+128-1:0] desc_q [];
-//desc_q desc_queue [$];
-
 // inter-thread 2-345 signals
-//bit [16+128-1:0] desc_queue_0 [$] = {};
-//bit [16+128-1:0] desc_queue_1 [$] = {};
-//bit [16+128-1:0] desc_queue_2 [$] = {};
 bit [16+128-1:0] desc_queue[3] [$];  // {desc_idx, desc_entry}
 
-// inter-thread 345-6 signals
-//bit [16+32-1:0] ring_used_queue_0 [$] = {};
-//bit [16+32-1:0] ring_used_queue_1 [$] = {};
-//bit [16+32-1:0] ring_used_queue_2 [$] = {};
-bit [16+32-1:0] ring_used_queue[3] [$];  // {desc_idx, desc_chain_len}
+// inter_thread 4-3 signals
+bit [2+8-1:0] loopback_queue [$];  // {sop/vld/eop, data}
 
-//// inter-thread 2-6 signals
-//reg ring_used_pending[3];
-//// make a record of pending used rings
-//always @(posedge `CSR_PATH.clk) begin
-//  for (int i = 0; i < 3; i++) begin
-//    if (`CSR_PATH.csr_rst)
-//      ring_used_pending[i] = 1'b0;
-//    else if (`TH02_PATH.ring_used_set[i])
-//      ring_used_pending[i] = 1'b1;
-//    else if (`TH06_PATH.ring_used_clr[i])
-//      ring_used_pending[i] = 1'b0;
-//  end
-//end
-//
-//reg [15:0] th02_next_avail_idx[3];
-//// update next available index
-//always @(*) begin
-//  for (int i = 0; i < 3; i++) begin
-//    th02_next_avail_idx[i] = `TH02_PATH.next_avail_idx[i];
-//  end
-//end
+// inter-thread 345-6 signals
+bit [16+32-1:0] ring_used_queue[3] [$];  // {desc_idx, desc_chain_len}
 
 // Inter-thread signals
 /////////////////////////////////////
