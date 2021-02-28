@@ -100,6 +100,7 @@
   //  end  
   //end
 
+  int i = 0;
   // { process notified virtqueue
   // Do we need multiple channels to hanlde multiple virtqueue?
   always begin
@@ -200,12 +201,28 @@
           // read from loopback queue and write to host mem@desc_entry_phy
           packet_ctrl = 2'b00;
           packet_data = 8'h00;
-          while (packet_ctrl != 2'b10 && `TOP_PATH.loopback_queue.size() != 0) begin
+          while (packet_ctrl != 2'b10) begin  // not eop
             @(posedge `CSR_PATH.clk);
-            packet_entry = `TOP_PATH.loopback_queue.pop_front();
-	   
-            packet_ctrl = packet_entry[9:8];
-            packet_data = packet_entry[7:0];
+	    if (`TOP_PATH.loopback_queue.size() != 0) begin
+              packet_entry = `TOP_PATH.loopback_queue.pop_front();
+	      data2 = data2 << 8;
+	      data2[7:0] = packet_entry[7:0];
+              i = i + 1;
+
+              packet_ctrl = packet_entry[9:8];
+              packet_data = packet_entry[7:0];
+            end else begin
+              packet_ctrl = 2'b00;
+              packet_data = 8'h00;
+	    end
+
+	    if (i == 4) begin
+              i = 0;
+              data1 = desc_entry_phy;
+              debug_trace_wr(data1, data2);
+
+	      desc_entry_phy = desc_entry_phy + 4;
+            end
           end
 
           // write to the used ring queue

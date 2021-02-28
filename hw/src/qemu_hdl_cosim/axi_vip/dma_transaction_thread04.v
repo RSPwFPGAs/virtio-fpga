@@ -190,13 +190,23 @@
 
 	  // read from host mem@desc_entry_phy and write to the loopback queue
           @(posedge `CSR_PATH.clk);
-	  `TOP_PATH.loopback_queue.push_back({2'b01, 8'haa});
-          @(posedge `CSR_PATH.clk);
-	  `TOP_PATH.loopback_queue.push_back({2'b11, 8'hbb});
-          @(posedge `CSR_PATH.clk);
-	  `TOP_PATH.loopback_queue.push_back({2'b11, 8'hcc});
-          @(posedge `CSR_PATH.clk);
-	  `TOP_PATH.loopback_queue.push_back({2'b10, 8'hdd});
+	  `TOP_PATH.loopback_queue.push_back({2'b01, 8'h00});  // sop
+	  while (desc_chain_len[31] != 1'b1) begin
+            @(posedge `CSR_PATH.clk);
+
+            data1 = desc_entry_phy;
+            debug_trace_rd(data1, data2);
+
+	    `TOP_PATH.loopback_queue.push_back({2'b11, data2[31:24]});
+	    `TOP_PATH.loopback_queue.push_back({2'b11, data2[23:16]});
+	    `TOP_PATH.loopback_queue.push_back({2'b11, data2[15: 8]});
+	    `TOP_PATH.loopback_queue.push_back({2'b11, data2[ 7: 0]});
+
+	    desc_chain_len = desc_chain_len - 4;
+	    desc_entry_phy = desc_entry_phy + 4;
+          end
+	  @(posedge `CSR_PATH.clk);
+	  `TOP_PATH.loopback_queue.push_back({2'b10, 8'h00});  // eop
 
           // write to the used ring queue
           desc_chain_len = desc_entry_flg_writ? desc_chain_len: 0;//5.1.6.1
