@@ -186,9 +186,17 @@
       debug_trace_wr(data1, data2);                                                   $display("th06: 6.0 dma_wr");
       // } update used ring header
 
+
+      // thread 6: MSI-X interrupt
+      if (virt_queue_sel == 0) begin  // only send out msix interrupt for receive queue
+        `TOP_PATH.DUT.shell_region_i.FIM.FIU.pcie_axi_bridge.QEMUPCIeBridge_0.inst.axi4_s_i_inst.intx_msi_request_number  = `CSR_PATH.csr_reg_16B2[virt_queue_sel];
+        @(posedge `CSR_PATH.clk);
+        `TOP_PATH.DUT.shell_region_i.FIM.FIU.pcie_axi_bridge.QEMUPCIeBridge_0.inst.axi4_s_i_inst.intx_msi_request_virtual = 1'b1;
+        @(posedge `CSR_PATH.clk);
+        `TOP_PATH.DUT.shell_region_i.FIM.FIU.pcie_axi_bridge.QEMUPCIeBridge_0.inst.axi4_s_i_inst.intx_msi_request_virtual = 1'b0;
+      end
     end
 
-    // TODO: thread 7: MSI-X interrupt
   end
   //// } process notified virtqueue
 

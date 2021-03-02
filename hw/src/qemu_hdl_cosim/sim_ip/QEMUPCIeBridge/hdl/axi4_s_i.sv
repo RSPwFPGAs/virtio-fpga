@@ -20,11 +20,14 @@ module axi4_s_i
 );
 
     import "DPI-C" function void     C_req_interrupt(input int vector);
-    
-    always@(posedge intx_msi_request)
+
+    // virtual msix request
+    reg       intx_msi_request_virtual = 0;
+    reg [1:0] intx_msi_request_number  = 2'b00;
+
+    always@(posedge intx_msi_request_virtual or posedge intx_msi_request)
     begin: INTR
-        //Currently 0 is the only supported interrupt vector
-        C_req_interrupt(0);
+        C_req_interrupt(intx_msi_request_number);
     end
 
     assign interrupt_out = 0;

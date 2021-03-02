@@ -525,14 +525,14 @@ diff -Naur qemu-2.10.0-rc3.orig/hw/misc/accelerator_pcie.c qemu-2.10.0-rc3/hw/mi
 +                          object_get_typename(OBJECT(dev)), d->id, s);
 +    qemu_format_nic_info_str(qemu_get_queue(s->nic), s->conf.macaddr.a);
 +    
-+    //// MSI init
-+    //msi_init(dev, 0x00, NUM_MSI_VEC, false, false, errp);
-+
 +    // MSIX init
 +    msix_init(dev, NUM_MSIX_VEC, 
-+              &s->bar1, 1, 0x0000, 
-+              &s->bar1, 1, 0x2000,
++              &s->bar0, 0, 0x0080, 
++              &s->bar0, 0, 0x0100,
 +              0x50, errp);
++
++    // MSIX enable
++    for (int i = 0; i < 3; i++) { msix_vector_use(dev, i); }
 +}
 +
 +/* TODO Is this needed? */

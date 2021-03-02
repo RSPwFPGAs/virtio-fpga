@@ -36,7 +36,7 @@ module virtio_csr (
 
   parameter NB_COL = 4;                           // Specify number of columns (number of bytes)
   parameter COL_WIDTH = 8;                        // Specify column width (byte width, typically 8 or 9)
-  parameter RAM_DEPTH = 32;                       // Specify RAM depth (number of entries)
+  parameter RAM_DEPTH = 128;                      // Specify RAM depth (number of entries)
   parameter RAM_PERFORMANCE = "LOW_LATENCY";      // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
   parameter INIT_FILE = "";                       // Specify name/location of RAM initialization file if using one (leave blank if not)
 
