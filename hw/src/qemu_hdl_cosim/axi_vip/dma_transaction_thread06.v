@@ -40,7 +40,7 @@
   reg [15:0] virt_queue_num = 0;
   reg [15:0] virt_queue_sel = 0;
   reg [63:0] virt_queue_phy = 0;
-  reg [15:0] curr_avail_idx[3];
+  reg [ 7:0] curr_avail_idx[3];
   reg [15:0] next_avail_idx[3];
   reg [15:0] num_avail_idx;
   reg [ 7:0] ith_avail_idx;
@@ -175,14 +175,12 @@
       end
      
       // update current available index
-      //curr_avail_idx[virt_queue_sel] = curr_avail_idx[virt_queue_sel] + ring_used_queue_size[virt_queue_sel];
-      ith_avail_idx = ith_avail_idx + 1;
-      curr_avail_idx[virt_queue_sel] = ith_avail_idx;
+      curr_avail_idx[virt_queue_sel] = curr_avail_idx[virt_queue_sel] + ring_used_queue_size[virt_queue_sel];
 
       // { update used ring header
       // thread 6: write used ring flags+index(), 2B+2B
       data1 = virt_queue_phy+(0+16*256+1*4096)+0;
-      data2 = {curr_avail_idx[virt_queue_sel], 16'd0};
+      data2 = {7'd0, curr_avail_idx[virt_queue_sel], 16'd0};
       debug_trace_wr(data1, data2);                                                   $display("th06: 6.0 dma_wr");
       // } update used ring header
 

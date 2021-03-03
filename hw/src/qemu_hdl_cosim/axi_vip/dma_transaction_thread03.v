@@ -53,6 +53,9 @@
   reg [15:0] desc_entry_nxt = 0;
   reg [31:0] desc_chain_len= 0;
 
+  reg [63:0] proc_chain_phy = 0;
+  reg [31:0] proc_chain_len = 0;
+
   reg [2+8-1:0] packet_entry;
   reg [2  -1:0] packet_ctrl;
   reg [  8-1:0] packet_data;
@@ -201,6 +204,8 @@
           // read from loopback queue and write to host mem@desc_entry_phy
           packet_ctrl = 2'b00;
           packet_data = 8'h00;
+          proc_chain_len = desc_chain_len;
+          proc_chain_phy = desc_entry_phy;
           while (packet_ctrl != 2'b10) begin  // not eop
             @(posedge `CSR_PATH.clk);
 	    if (`TOP_PATH.loopback_queue.size() != 0) begin
@@ -218,10 +223,12 @@
 
 	    if (i == 4) begin
               i = 0;
-              data1 = desc_entry_phy;
+
+              data1 = proc_chain_phy;
               debug_trace_wr(data1, data2);
 
-	      desc_entry_phy = desc_entry_phy + 4;
+              proc_chain_len = proc_chain_len - 4;
+              proc_chain_phy = proc_chain_phy + 4;
             end
           end
 

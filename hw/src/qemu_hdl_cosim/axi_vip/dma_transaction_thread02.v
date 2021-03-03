@@ -167,13 +167,6 @@
 
           desc_chain_len = desc_chain_len + desc_entry_len;
 
-          // push descriptor to FIFO
-          //if (virt_queue_sel == 0)  
-	  //  `TOP_PATH.desc_queue_0.push_back({desc_idx, desc_entry});
-          //if (virt_queue_sel == 1)  
-	  //  `TOP_PATH.desc_queue_1.push_back({desc_idx, desc_entry});
-          //if (virt_queue_sel == 2)  
-	  //  `TOP_PATH.desc_queue_2.push_back({desc_idx, desc_entry});
 	  `TOP_PATH.desc_queue[virt_queue_sel].push_back({desc_idx, desc_entry});
 	end
       

@@ -52,6 +52,9 @@
   reg desc_entry_flg_next, desc_entry_flg_writ, desc_entry_flg_indi;
   reg [15:0] desc_entry_nxt = 0;
   reg [31:0] desc_chain_len= 0;
+  
+  reg [63:0] proc_chain_phy = 0;
+  reg [31:0] proc_chain_len = 0;
 
   //reg queue_notify_set[3];
   //reg queue_notify_clr[3];
@@ -165,12 +168,19 @@
     //    end
     //  
         // thread 5: handle controlq
-	if (`TOP_PATH.desc_queue[2].size() > 0) begin
+	//if (`TOP_PATH.desc_queue[2].size() > 0) begin
           // read the whole descriptor chain, following the NEXT flag+next
           desc_entry_flg_next = 1'b1;
           desc_chain_len = 0;
           while (desc_entry_flg_next) begin
-            // read from the input queue
+            @(posedge `CSR_PATH.clk);
+
+            // wait for descriptor queue not empty
+            while (`TOP_PATH.desc_queue[2].size() == 0) begin
+              @(posedge `CSR_PATH.clk);
+            end
+
+            // read from the descriptor queue
             {desc_idx, desc_entry} = `TOP_PATH.desc_queue[2].pop_front();
   
             //2.4.5 The Virtqueue Descriptor Table
@@ -186,12 +196,29 @@
             desc_chain_len = desc_chain_len + desc_entry_len;
 
             $display("th05 desc: %d, %d, %d, %d, %d", desc_entry_len, desc_entry_flg_next, desc_entry_flg_writ, desc_entry_flg_indi, `TOP_PATH.desc_queue[2].size());
+
+            // read from host mem@desc_entry_phy and write to host mem@desc_entry_phy
+            proc_chain_len = desc_chain_len;
+            proc_chain_phy = desc_entry_phy;
+            while (proc_chain_len[31] != 1'b1) begin
+              @(posedge `CSR_PATH.clk);
+
+              // 5.1.6.5 Control Virtqueue
+              data1 = proc_chain_phy;
+              debug_trace_rd(data1, data2);
+
+	      // TODO: write back ack
+              //debug_trace_wr(data1, data2);
+
+              proc_chain_len = proc_chain_len - 4;
+              proc_chain_phy = proc_chain_phy + 4;
+            end
           end
 
           // write to the output queue
           desc_chain_len = desc_entry_flg_writ? desc_chain_len: 0;//5.1.6.1
           `TOP_PATH.ring_used_queue[2].push_back({desc_idx, desc_chain_len});
-        end
+        //end
 
     //    
     //    if (1) begin  // pretending to send/receive packets

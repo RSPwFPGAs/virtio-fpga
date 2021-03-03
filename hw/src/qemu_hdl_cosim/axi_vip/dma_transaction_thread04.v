@@ -53,6 +53,9 @@
   reg [15:0] desc_entry_nxt = 0;
   reg [31:0] desc_chain_len= 0;
 
+  reg [63:0] proc_chain_phy = 0;
+  reg [31:0] proc_chain_len = 0;
+
   //reg queue_notify_set[3];
   //reg queue_notify_clr[3];
   //reg [2:0] queue_notify_pending;
@@ -170,6 +173,7 @@
           desc_entry_flg_next = 1'b1;
           desc_chain_len = 0;
           while (desc_entry_flg_next) begin
+            @(posedge `CSR_PATH.clk);
             // read from the descriptor queue
             {desc_idx, desc_entry} = `TOP_PATH.desc_queue[1].pop_front();
  
@@ -189,12 +193,14 @@
           end
 
 	  // read from host mem@desc_entry_phy and write to the loopback queue
+          proc_chain_len = desc_chain_len;
+          proc_chain_phy = desc_entry_phy;
           @(posedge `CSR_PATH.clk);
 	  `TOP_PATH.loopback_queue.push_back({2'b01, 8'h00});  // sop
-	  while (desc_chain_len[31] != 1'b1) begin
+	  while (proc_chain_len[31] != 1'b1) begin
             @(posedge `CSR_PATH.clk);
 
-            data1 = desc_entry_phy;
+            data1 = proc_chain_phy;
             debug_trace_rd(data1, data2);
 
 	    `TOP_PATH.loopback_queue.push_back({2'b11, data2[31:24]});
@@ -202,8 +208,8 @@
 	    `TOP_PATH.loopback_queue.push_back({2'b11, data2[15: 8]});
 	    `TOP_PATH.loopback_queue.push_back({2'b11, data2[ 7: 0]});
 
-	    desc_chain_len = desc_chain_len - 4;
-	    desc_entry_phy = desc_entry_phy + 4;
+            proc_chain_len = proc_chain_len - 4;
+            proc_chain_phy = proc_chain_phy + 4;
           end
 	  @(posedge `CSR_PATH.clk);
 	  `TOP_PATH.loopback_queue.push_back({2'b10, 8'h00});  // eop
