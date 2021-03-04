@@ -56,6 +56,12 @@
   reg [63:0] proc_chain_phy = 0;
   reg [31:0] proc_chain_len = 0;
 
+  reg [ 1:0] ctrl_byte_sel = 0;
+  reg [ 7:0] ctrl_clss = 0;
+  reg [ 7:0] ctrl_cmmd = 0;
+  reg [31:0] ctrl_data = 0;
+  reg [ 7:0] ctrl_ack  = 0;
+
   //reg queue_notify_set[3];
   //reg queue_notify_clr[3];
   //reg [2:0] queue_notify_pending;
@@ -168,57 +174,66 @@
     //    end
     //  
         // thread 5: handle controlq
-	//if (`TOP_PATH.desc_queue[2].size() > 0) begin
-          // read the whole descriptor chain, following the NEXT flag+next
-          desc_entry_flg_next = 1'b1;
-          desc_chain_len = 0;
-          while (desc_entry_flg_next) begin
+        // read the whole descriptor chain, following the NEXT flag+next
+        desc_entry_flg_next = 1'b1;
+        desc_chain_len = 0;
+        while (desc_entry_flg_next) begin
+          @(posedge `CSR_PATH.clk);
+
+          // wait for descriptor queue not empty
+          while (`TOP_PATH.desc_queue[2].size() == 0) begin
             @(posedge `CSR_PATH.clk);
-
-            // wait for descriptor queue not empty
-            while (`TOP_PATH.desc_queue[2].size() == 0) begin
-              @(posedge `CSR_PATH.clk);
-            end
-
-            // read from the descriptor queue
-            {desc_idx, desc_entry} = `TOP_PATH.desc_queue[2].pop_front();
-  
-            //2.4.5 The Virtqueue Descriptor Table
-            desc_entry_phy = desc_entry[ 63:  0];  // 64b
-            desc_entry_len = desc_entry[ 95: 64];  // 32b
-            desc_entry_flg = desc_entry[111: 96];  // 16b
-            desc_entry_nxt = desc_entry[127:112];  // 16b
-  
-            desc_entry_flg_next = desc_entry_flg[0];
-            desc_entry_flg_writ = desc_entry_flg[1];
-            desc_entry_flg_indi = desc_entry_flg[2];
-  
-            desc_chain_len = desc_chain_len + desc_entry_len;
-
-            $display("th05 desc: %d, %d, %d, %d, %d", desc_entry_len, desc_entry_flg_next, desc_entry_flg_writ, desc_entry_flg_indi, `TOP_PATH.desc_queue[2].size());
-
-            // read from host mem@desc_entry_phy and write to host mem@desc_entry_phy
-            proc_chain_len = desc_chain_len;
-            proc_chain_phy = desc_entry_phy;
-            while (proc_chain_len[31] != 1'b1) begin
-              @(posedge `CSR_PATH.clk);
-
-              // 5.1.6.5 Control Virtqueue
-              data1 = proc_chain_phy;
-              debug_trace_rd(data1, data2);
-
-	      // TODO: write back ack
-              //debug_trace_wr(data1, data2);
-
-              proc_chain_len = proc_chain_len - 4;
-              proc_chain_phy = proc_chain_phy + 4;
-            end
           end
 
-          // write to the output queue
-          desc_chain_len = desc_entry_flg_writ? desc_chain_len: 0;//5.1.6.1
-          `TOP_PATH.ring_used_queue[2].push_back({desc_idx, desc_chain_len});
-        //end
+          // read from the descriptor queue
+          {desc_idx, desc_entry} = `TOP_PATH.desc_queue[2].pop_front();
+ 
+          //2.4.5 The Virtqueue Descriptor Table
+          desc_entry_phy = desc_entry[ 63:  0];  // 64b
+          desc_entry_len = desc_entry[ 95: 64];  // 32b
+          desc_entry_flg = desc_entry[111: 96];  // 16b
+          desc_entry_nxt = desc_entry[127:112];  // 16b
+ 
+          desc_entry_flg_next = desc_entry_flg[0];
+          desc_entry_flg_writ = desc_entry_flg[1];
+          desc_entry_flg_indi = desc_entry_flg[2];
+ 
+          desc_chain_len = desc_chain_len + desc_entry_len;
+
+          $display("th05 desc: %d, %d, %d, %d, %d", desc_entry_len, desc_entry_flg_next, desc_entry_flg_writ, desc_entry_flg_indi, `TOP_PATH.desc_queue[2].size());
+
+          // read from host mem@desc_entry_phy and write to host mem@desc_entry_phy
+          proc_chain_len = desc_chain_len;
+          proc_chain_phy = desc_entry_phy;
+          while (proc_chain_len[31] != 1'b1) begin
+            @(posedge `CSR_PATH.clk);
+
+            // 5.1.6.5 Control Virtqueue
+            data1 = proc_chain_phy;
+            debug_trace_rd(data1, data2);
+
+            // parse virtio_net_ctrl structure
+            ctrl_byte_sel = data1[1:0];
+            data2 = data2 >> (ctrl_byte_sel * 8);
+            if (desc_chain_len == 2)                                {ctrl_cmmd, ctrl_clss} = data2[15:0];
+            if (desc_chain_len >  2 && desc_entry_flg_writ == 1'b0)              ctrl_data = data2[31:0];
+            if                        (desc_entry_flg_writ == 1'b1)              ctrl_ack  = data2[ 7:0];
+
+            // write back ack
+            if (desc_entry_flg_writ == 1'b1) begin
+              data1 = proc_chain_phy;
+              data2 = 32'd0;  // just accept all configurations. TODO: byte selection
+              debug_trace_wr(data1, data2);
+            end
+
+            proc_chain_len = proc_chain_len - 4;
+            proc_chain_phy = proc_chain_phy + 4;
+          end
+        end
+
+        // write to the used_ring queue
+        desc_chain_len = desc_entry_flg_writ? desc_chain_len: 0;//5.1.6.1
+        `TOP_PATH.ring_used_queue[2].push_back({desc_idx, desc_chain_len});
 
     //    
     //    if (1) begin  // pretending to send/receive packets

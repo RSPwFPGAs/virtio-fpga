@@ -16,15 +16,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="171298333334fs"></ZoomStartTime>
-      <ZoomEndTime time="172904333335fs"></ZoomEndTime>
-      <Cursor1Time time="172248333000fs"></Cursor1Time>
+      <ZoomStartTime time="162154000000fs"></ZoomStartTime>
+      <ZoomEndTime time="169189000001fs"></ZoomEndTime>
+      <Cursor1Time time="155974000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="219"></NameColumnWidth>
-      <ValueColumnWidth column_width="131"></ValueColumnWidth>
+      <ValueColumnWidth column_width="148"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="287" />
+   <WVObjectSize size="293" />
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_axi_ctl_aclk">
       <obj_property name="ElementShortName">i_axi_ctl_aclk</obj_property>
       <obj_property name="ObjectShortName">i_axi_ctl_aclk</obj_property>
@@ -980,6 +980,7 @@
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_chain_len">
       <obj_property name="ElementShortName">desc_chain_len[31:0]</obj_property>
       <obj_property name="ObjectShortName">desc_chain_len[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider227" type="divider">
       <obj_property name="label"> thread03: receiveq</obj_property>
@@ -1104,7 +1105,7 @@
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th05/desc_entry_len">
       <obj_property name="ElementShortName">desc_entry_len[31:0]</obj_property>
       <obj_property name="ObjectShortName">desc_entry_len[31:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th05/desc_entry_flg">
       <obj_property name="ElementShortName">desc_entry_flg[15:0]</obj_property>
@@ -1138,6 +1139,30 @@
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th05/proc_chain_len">
       <obj_property name="ElementShortName">proc_chain_len[31:0]</obj_property>
       <obj_property name="ObjectShortName">proc_chain_len[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th05/ctrl_byte_sel">
+      <obj_property name="ElementShortName">ctrl_byte_sel[1:0]</obj_property>
+      <obj_property name="ObjectShortName">ctrl_byte_sel[1:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th05/ctrl_clss">
+      <obj_property name="ElementShortName">ctrl_clss[7:0]</obj_property>
+      <obj_property name="ObjectShortName">ctrl_clss[7:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th05/ctrl_cmmd">
+      <obj_property name="ElementShortName">ctrl_cmmd[7:0]</obj_property>
+      <obj_property name="ObjectShortName">ctrl_cmmd[7:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th05/ctrl_data">
+      <obj_property name="ElementShortName">ctrl_data[7:0]</obj_property>
+      <obj_property name="ObjectShortName">ctrl_data[7:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th05/ctrl_ack">
+      <obj_property name="ElementShortName">ctrl_ack[7:0]</obj_property>
+      <obj_property name="ObjectShortName">ctrl_ack[7:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th05/data1">
+      <obj_property name="ElementShortName">data1[63:0]</obj_property>
+      <obj_property name="ObjectShortName">data1[63:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th05/data2">
       <obj_property name="ElementShortName">data2[31:0]</obj_property>
