@@ -37,6 +37,9 @@
   `define CSR_PATH test_top.DUT.shell_region_i.FIM.FIU.feature_ram.virtio_csr_0.inst
   `define TOP_PATH test_top 
 
+  //`define PREFETCH_ALL_RX_DESC
+  `define PREFETCH_LIMIT 4
+
   reg [15:0] virt_queue_num = 0;
   reg [15:0] virt_queue_sel = 0;
   reg [63:0] virt_queue_phy = 0;
@@ -52,6 +55,8 @@
   reg desc_entry_flg_next, desc_entry_flg_writ, desc_entry_flg_indi;
   reg [15:0] desc_entry_nxt = 0;
   reg [31:0] desc_chain_len= 0;
+
+  reg [ 7:0] desc_queue_size[3];
 
   //reg queue_notify_set[3];
   //reg queue_notify_clr[3];
@@ -104,26 +109,55 @@
   // thread 2: read available ring entry, num*2B
   always begin
     @(posedge `CSR_PATH.clk);
+    // sync local next available index with thread1
+    for (int i = 0; i < 3; i++) begin
+      next_avail_idx[i]  = `TOP_PATH.th01_next_avail_idx[i];
+      desc_queue_size[i] = `TOP_PATH.desc_queue[i].size(); 
+    end 
+`ifdef PREFETCH_ALL_RX_DESC
+    // handle newly_added available ring
     if (`TOP_PATH.ring_available_pending != 0) begin
+`else
+    // handle unfinished/newly_added available ring
+    if (1) begin
+`endif
+`ifdef PREFETCH_ALL_RX_DESC
       // arbiter to choose which pending available ring to process
       virt_queue_sel = `TOP_PATH.ring_available_pending[0]? 0:
                       (`TOP_PATH.ring_available_pending[1]? 1:
                       (`TOP_PATH.ring_available_pending[2]? 2:
                                                             0));
+`else
+      // arbiter to choose which pending available ring to process
+      virt_queue_sel = (desc_queue_size[0] != `PREFETCH_LIMIT && next_avail_idx[0] != curr_avail_idx[0])? 0:
+                      ((desc_queue_size[1] != `PREFETCH_LIMIT && next_avail_idx[1] != curr_avail_idx[1])? 1:
+                      ((desc_queue_size[2] != `PREFETCH_LIMIT && next_avail_idx[2] != curr_avail_idx[2])? 2:
+                                                                                                          0));
+`endif
       // get Virtqueue physical address
       virt_queue_phy = {20'h00000, `CSR_PATH.csr_reg_08B4[virt_queue_sel][31:0], 12'h000};
       
+`ifdef PREFETCH_ALL_RX_DESC
       // clear pending available ring
       @(posedge `CSR_PATH.clk);
       ring_available_clr[virt_queue_sel] = 1;
       @(posedge `CSR_PATH.clk);
       ring_available_clr[virt_queue_sel] = 0;
+`endif
 
       // calculate number of available index in available ring
-      next_avail_idx[virt_queue_sel] = `TOP_PATH.th01_next_avail_idx[virt_queue_sel]; 
       num_avail_idx = (next_avail_idx[virt_queue_sel] >= curr_avail_idx[virt_queue_sel])?
                       (next_avail_idx[virt_queue_sel]  - curr_avail_idx[virt_queue_sel]):
                 (256 + next_avail_idx[virt_queue_sel]  - curr_avail_idx[virt_queue_sel]);
+
+`ifdef PREFETCH_ALL_RX_DESC
+      // use the available number, regardless of the decriptor queue status
+`else
+      // use the smaller one
+      num_avail_idx = ((`PREFETCH_LIMIT - desc_queue_size[virt_queue_sel]) > num_avail_idx)?
+                       num_avail_idx: 
+                       (`PREFETCH_LIMIT - desc_queue_size[virt_queue_sel]);
+`endif
 
       // { handle multiple descriptor chains
       for (int i = 0; i < num_avail_idx; i++) begin
@@ -184,9 +218,14 @@
       end
       // } handle multiple descriptor chains
       
-      // update current available index
+`ifdef PREFETCH_ALL_RX_DESC
+      // update current available index to the next available index
       curr_avail_idx[virt_queue_sel]  = next_avail_idx[virt_queue_sel]; 
- 
+`else
+      // update current available index with the consumed available ring entry
+      curr_avail_idx[virt_queue_sel]  = curr_avail_idx[virt_queue_sel] + num_avail_idx; 
+`endif
+
       //// { update used ring header
       //if (1) begin  // pretending to send/receive packets
       //  // TODO: thread 6: write used ring flags+index(), 2B+2B

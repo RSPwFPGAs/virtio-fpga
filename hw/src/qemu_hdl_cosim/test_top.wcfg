@@ -16,15 +16,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="162154000000fs"></ZoomStartTime>
-      <ZoomEndTime time="169189000001fs"></ZoomEndTime>
-      <Cursor1Time time="155974000000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="429994000001fs"></ZoomEndTime>
+      <Cursor1Time time="142622000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="219"></NameColumnWidth>
-      <ValueColumnWidth column_width="148"></ValueColumnWidth>
+      <ValueColumnWidth column_width="140"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="293" />
+   <WVObjectSize size="300" />
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_axi_ctl_aclk">
       <obj_property name="ElementShortName">i_axi_ctl_aclk</obj_property>
       <obj_property name="ObjectShortName">i_axi_ctl_aclk</obj_property>
@@ -933,6 +933,10 @@
       <obj_property name="ElementShortName">ring_available_set[0:2]</obj_property>
       <obj_property name="ObjectShortName">ring_available_set[0:2]</obj_property>
    </wvobject>
+   <wvobject type="array" fp_name="/test_top/ring_available_pending">
+      <obj_property name="ElementShortName">ring_available_pending[0:2]</obj_property>
+      <obj_property name="ObjectShortName">ring_available_pending[0:2]</obj_property>
+   </wvobject>
    <wvobject fp_name="divider227" type="divider">
       <obj_property name="label">thread02</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -940,6 +944,44 @@
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/ring_available_clr">
       <obj_property name="ElementShortName">ring_available_clr[0:2]</obj_property>
       <obj_property name="ObjectShortName">ring_available_clr[0:2]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_queue_size">
+      <obj_property name="ElementShortName">desc_queue_size[0:2][7:0]</obj_property>
+      <obj_property name="ObjectShortName">desc_queue_size[0:2][7:0]</obj_property>
+      <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_queue_size[0]">
+         <obj_property name="ElementShortName">[0][7:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][7:0]</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_queue_size[1]">
+         <obj_property name="ElementShortName">[1][7:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][7:0]</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_queue_size[2]">
+         <obj_property name="ElementShortName">[2][7:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][7:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/next_avail_idx">
+      <obj_property name="ElementShortName">next_avail_idx[0:2][15:0]</obj_property>
+      <obj_property name="ObjectShortName">next_avail_idx[0:2][15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/curr_avail_idx">
+      <obj_property name="ElementShortName">curr_avail_idx[0:2][15:0]</obj_property>
+      <obj_property name="ObjectShortName">curr_avail_idx[0:2][15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/virt_queue_phy">
+      <obj_property name="ElementShortName">virt_queue_phy[63:0]</obj_property>
+      <obj_property name="ObjectShortName">virt_queue_phy[63:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/virt_queue_sel">
+      <obj_property name="ElementShortName">virt_queue_sel[15:0]</obj_property>
+      <obj_property name="ObjectShortName">virt_queue_sel[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/num_avail_idx">
+      <obj_property name="ElementShortName">num_avail_idx[15:0]</obj_property>
+      <obj_property name="ObjectShortName">num_avail_idx[15:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_idx">
       <obj_property name="ElementShortName">desc_idx[15:0]</obj_property>
@@ -1153,8 +1195,8 @@
       <obj_property name="ObjectShortName">ctrl_cmmd[7:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th05/ctrl_data">
-      <obj_property name="ElementShortName">ctrl_data[7:0]</obj_property>
-      <obj_property name="ObjectShortName">ctrl_data[7:0]</obj_property>
+      <obj_property name="ElementShortName">ctrl_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ctrl_data[31:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th05/ctrl_ack">
       <obj_property name="ElementShortName">ctrl_ack[7:0]</obj_property>
