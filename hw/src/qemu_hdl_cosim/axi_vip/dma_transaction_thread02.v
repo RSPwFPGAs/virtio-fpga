@@ -57,6 +57,7 @@
   reg [31:0] desc_chain_len= 0;
 
   reg [ 7:0] desc_queue_size[3];
+  reg [15:0] num_toget_idx;
 
   //reg queue_notify_set[3];
   //reg queue_notify_clr[3];
@@ -152,15 +153,16 @@
 
 `ifdef PREFETCH_ALL_RX_DESC
       // use the available number, regardless of the decriptor queue status
+      num_toget_idx = num_avail_idx;
 `else
       // use the smaller one
-      num_avail_idx = ((`PREFETCH_LIMIT - desc_queue_size[virt_queue_sel]) > num_avail_idx)?
-                       num_avail_idx: 
-                       (`PREFETCH_LIMIT - desc_queue_size[virt_queue_sel]);
+      num_toget_idx = ((`PREFETCH_LIMIT - desc_queue_size[virt_queue_sel]) < num_avail_idx)?
+                       (`PREFETCH_LIMIT - desc_queue_size[virt_queue_sel]):
+                       num_avail_idx; 
 `endif
 
       // { handle multiple descriptor chains
-      for (int i = 0; i < num_avail_idx; i++) begin
+      for (int i = 0; i < num_toget_idx; i++) begin
         // calculate the ith idx
         ith_avail_idx = curr_avail_idx[virt_queue_sel]+i;// 0~255
 
@@ -223,7 +225,7 @@
       curr_avail_idx[virt_queue_sel]  = next_avail_idx[virt_queue_sel]; 
 `else
       // update current available index with the consumed available ring entry
-      curr_avail_idx[virt_queue_sel]  = curr_avail_idx[virt_queue_sel] + num_avail_idx; 
+      curr_avail_idx[virt_queue_sel]  = curr_avail_idx[virt_queue_sel] + num_toget_idx; 
 `endif
 
       //// { update used ring header

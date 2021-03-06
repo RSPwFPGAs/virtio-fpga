@@ -17,14 +17,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="429994000001fs"></ZoomEndTime>
-      <Cursor1Time time="142622000000fs"></Cursor1Time>
+      <ZoomEndTime time="587000000001fs"></ZoomEndTime>
+      <Cursor1Time time="52586000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="219"></NameColumnWidth>
-      <ValueColumnWidth column_width="140"></ValueColumnWidth>
+      <ValueColumnWidth column_width="282"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="300" />
+   <WVObjectSize size="302" />
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/i_axi_ctl_aclk">
       <obj_property name="ElementShortName">i_axi_ctl_aclk</obj_property>
       <obj_property name="ObjectShortName">i_axi_ctl_aclk</obj_property>
@@ -948,20 +948,7 @@
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_queue_size">
       <obj_property name="ElementShortName">desc_queue_size[0:2][7:0]</obj_property>
       <obj_property name="ObjectShortName">desc_queue_size[0:2][7:0]</obj_property>
-      <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_queue_size[0]">
-         <obj_property name="ElementShortName">[0][7:0]</obj_property>
-         <obj_property name="ObjectShortName">[0][7:0]</obj_property>
-         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_queue_size[1]">
-         <obj_property name="ElementShortName">[1][7:0]</obj_property>
-         <obj_property name="ObjectShortName">[1][7:0]</obj_property>
-         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_queue_size[2]">
-         <obj_property name="ElementShortName">[2][7:0]</obj_property>
-         <obj_property name="ObjectShortName">[2][7:0]</obj_property>
-      </wvobject>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/next_avail_idx">
       <obj_property name="ElementShortName">next_avail_idx[0:2][15:0]</obj_property>
@@ -971,17 +958,21 @@
       <obj_property name="ElementShortName">curr_avail_idx[0:2][15:0]</obj_property>
       <obj_property name="ObjectShortName">curr_avail_idx[0:2][15:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/virt_queue_phy">
-      <obj_property name="ElementShortName">virt_queue_phy[63:0]</obj_property>
-      <obj_property name="ObjectShortName">virt_queue_phy[63:0]</obj_property>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/num_avail_idx">
+      <obj_property name="ElementShortName">num_avail_idx[15:0]</obj_property>
+      <obj_property name="ObjectShortName">num_avail_idx[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/num_toget_idx">
+      <obj_property name="ElementShortName">num_toget_idx[15:0]</obj_property>
+      <obj_property name="ObjectShortName">num_toget_idx[15:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/virt_queue_sel">
       <obj_property name="ElementShortName">virt_queue_sel[15:0]</obj_property>
       <obj_property name="ObjectShortName">virt_queue_sel[15:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/num_avail_idx">
-      <obj_property name="ElementShortName">num_avail_idx[15:0]</obj_property>
-      <obj_property name="ObjectShortName">num_avail_idx[15:0]</obj_property>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/virt_queue_phy">
+      <obj_property name="ElementShortName">virt_queue_phy[63:0]</obj_property>
+      <obj_property name="ObjectShortName">virt_queue_phy[63:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_idx">
       <obj_property name="ElementShortName">desc_idx[15:0]</obj_property>
@@ -998,6 +989,7 @@
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_entry_len">
       <obj_property name="ElementShortName">desc_entry_len[31:0]</obj_property>
       <obj_property name="ObjectShortName">desc_entry_len[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th02/desc_entry_flg">
       <obj_property name="ElementShortName">desc_entry_flg[15:0]</obj_property>
@@ -1064,6 +1056,10 @@
       <obj_property name="ElementShortName">desc_chain_len[31:0]</obj_property>
       <obj_property name="ObjectShortName">desc_chain_len[31:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th03/lb_queue_size">
+      <obj_property name="ElementShortName">lb_queue_size[31:0]</obj_property>
+      <obj_property name="ObjectShortName">lb_queue_size[31:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th03/packet_ctrl">
       <obj_property name="ElementShortName">packet_ctrl[1:0]</obj_property>
@@ -1233,8 +1229,8 @@
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test_top/mst_axifull_toDMA_th06/curr_avail_idx">
-      <obj_property name="ElementShortName">curr_avail_idx[0:2][7:0]</obj_property>
-      <obj_property name="ObjectShortName">curr_avail_idx[0:2][7:0]</obj_property>
+      <obj_property name="ElementShortName">curr_avail_idx[0:2][15:0]</obj_property>
+      <obj_property name="ObjectShortName">curr_avail_idx[0:2][15:0]</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/test_top/DUT/shell_region_i/FIM/FIU/pcie_axi_bridge/QEMUPCIeBridge_0/inst/axi4_s_i_inst/intx_msi_request">
       <obj_property name="ElementShortName">intx_msi_request</obj_property>

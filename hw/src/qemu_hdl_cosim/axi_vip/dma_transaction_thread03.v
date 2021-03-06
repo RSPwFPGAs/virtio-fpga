@@ -56,6 +56,8 @@
   reg [63:0] proc_chain_phy = 0;
   reg [31:0] proc_chain_len = 0;
 
+  reg [31:0] lb_queue_size;
+
   reg [2+8-1:0] packet_entry;
   reg [2  -1:0] packet_ctrl;
   reg [  8-1:0] packet_data;
@@ -197,8 +199,10 @@
           end
 
           // wait for Rx packet
-          while (`TOP_PATH.loopback_queue.size() == 0) begin 
+          lb_queue_size = 0;
+          while (lb_queue_size == 0) begin 
             @(posedge `CSR_PATH.clk);
+            lb_queue_size = `TOP_PATH.loopback_queue.size();
           end
 
           // read from loopback queue and write to host mem@desc_entry_phy
