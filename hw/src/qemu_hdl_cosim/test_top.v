@@ -100,7 +100,7 @@ end
 bit [16+128-1:0] desc_queue[3] [$];  // {desc_idx, desc_entry}
 
 // inter_thread 4-3 signals
-bit [2+8-1:0] loopback_queue [$];  // {sop/vld/eop, data}
+bit [2+32-1:0] loopback_queue [$];  // {sop/vld/eop, data}
 
 // inter-thread 345-6 signals
 bit [16+32-1:0] ring_used_queue[3] [$];  // {desc_idx, desc_chain_len}

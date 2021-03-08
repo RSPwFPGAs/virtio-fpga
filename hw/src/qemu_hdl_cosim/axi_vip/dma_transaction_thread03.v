@@ -57,10 +57,11 @@
   reg [31:0] proc_chain_len = 0;
 
   reg [31:0] lb_queue_size;
+  reg [31:0] lb_packet_len;
 
-  reg [2+8-1:0] packet_entry;
-  reg [2  -1:0] packet_ctrl;
-  reg [  8-1:0] packet_data;
+  reg [2+32-1:0] packet_entry;
+  reg [2   -1:0] packet_ctrl;
+  reg [  32-1:0] packet_data;
 
   //reg queue_notify_set[3];
   //reg queue_notify_clr[3];
@@ -212,32 +213,31 @@
           proc_chain_phy = desc_entry_phy;
           while (packet_ctrl != 2'b10) begin  // not eop
             @(posedge `CSR_PATH.clk);
-	    if (`TOP_PATH.loopback_queue.size() != 0) begin
+            if (`TOP_PATH.loopback_queue.size() != 0) begin
               packet_entry = `TOP_PATH.loopback_queue.pop_front();
-	      data2 = data2 << 8;
-	      data2[7:0] = packet_entry[7:0];
-              i = i + 1;
+              packet_ctrl = packet_entry[33:32];
+              packet_data = packet_entry[31: 0];
+              if (packet_ctrl == 2'b11) begin
+                data1 = proc_chain_phy;
+                data2 = packet_entry[31:0];
+                debug_trace_wr(data1, data2);
 
-              packet_ctrl = packet_entry[9:8];
-              packet_data = packet_entry[7:0];
+                proc_chain_len = proc_chain_len - 4;
+                proc_chain_phy = proc_chain_phy + 4;
+              end
+              if (packet_ctrl == 2'b01) begin
+                lb_packet_len = packet_entry[31: 0];
+              end
             end else begin
               packet_ctrl = 2'b00;
               packet_data = 8'h00;
 	    end
 
-	    if (i == 4) begin
-              i = 0;
 
-              data1 = proc_chain_phy;
-              debug_trace_wr(data1, data2);
-
-              proc_chain_len = proc_chain_len - 4;
-              proc_chain_phy = proc_chain_phy + 4;
-            end
           end
 
           // write to the used ring queue
-          desc_chain_len = desc_entry_flg_writ? desc_chain_len: 0;//5.1.6.1 
+          desc_chain_len = lb_packet_len;//desc_entry_flg_writ? desc_chain_len: 0;//5.1.6.1 
           `TOP_PATH.ring_used_queue[0].push_back({desc_idx, desc_chain_len});
         end
 
