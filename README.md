@@ -2,7 +2,7 @@
 
 # Table of Contents
 1. [Overview of virtio-fpga](#overview)
-3. [Run Co-Simulation](#overviewrspdma)
+3. [Rapid System Prototyping](#overviewrspdma)
     - [QEMU-HDL Co-Simulation Structure](#overviewsimstr)
     - [Repository Directory Structure](#overviewdirstr)
 
@@ -13,7 +13,7 @@ virtio-fpga: A platform for emulating Virtio devices with FPGAs
 Follow the [procedure](./sw/QEMU/qemu_hdl_cosim/README.md) to run the emulation.
 
 <a name="overviewrspdma"></a>
-# Enabling Rapid System Prototyping of Virtio Device DMAs
+# Rapid System Prototyping of Virtio Device DMAs
 The Virtio device follows a common structure of PCIe CSR-DMA model. The feature_ram, which is the CSR, is a PCIe target mapped to BAR0; The axi_vip_thread modules, which are the multiple concurrent DMAs, are the PCIe initiators generating read/write transactions to the host memory. The behavior models of the multiple concurrent DMAs are:
 ```
  1. dma_transaction_thread00.v  Capture Queue Notify
@@ -82,10 +82,10 @@ ping -i ens4 10.10.10.10 -c 10
 │       └── qemu_hdl_cosim
 │           ├── axi_vip/dma_transaction_thread0x.v
 │           └── sim_ip
-│               └── QEMUPCIeBridge
+│               └── QEMUPCIeBridge/hdl/axi4_ip_mod.sv
 └── sw
     └── QEMU
         └── qemu_hdl_cosim
-            ├── qemu
+            ├── qemu/qemu-2.10.0-rc3/hw/misc/accelerator_pcie.c
             └── scripts
 ```
