@@ -23,7 +23,7 @@ This release has been tested with the following tools:
 >
 >```
 >Ubuntu 18.04.3, Ubuntu 20.04.1
->Vivado 2018.3, Vivado 2020.2
+>Vivado 2018.3
 >QEMU 2.10 rc3
 >```
 
