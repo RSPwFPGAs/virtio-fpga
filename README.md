@@ -27,10 +27,7 @@ The Virtio device follows a common structure of PCIe CSR-DMA model. The feature_
 The rapidly developed SW-like axi_vip_thread modules can be individually disabled and the axi_vip_null placeholders can be correspondingly replaced by synthesizable RTL modules. This enables incremental design and modular debug of the FSMs in each DMA initiator. 
 
 # Virtio CSR-DMA Block Design
-x-special/nautilus-clipboard
-copy
-file:///home/bibo/Pictures/virtio%20multiple%20concurrent%20DMA.jpg
-
+![Alt text](./doc/pic/virtio_hw_design.jpg)
 
 <a name="overviewsimstr"></a>
 # QEMU-HDL Co-Simulation Structure
